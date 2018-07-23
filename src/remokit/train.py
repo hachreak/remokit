@@ -12,7 +12,7 @@ class AccuracyHistory(Callback):
         self.acc.append(logs.get('acc'))
 
 
-def run(get_model, train, batch_size=None, epochs=None, history=None):
+def run(model, train, batch_size=None, epochs=None, history=None):
     """Run training."""
     batch_size = batch_size or 128
     epochs = epochs or 10
@@ -23,13 +23,7 @@ def run(get_model, train, batch_size=None, epochs=None, history=None):
 
     img_x, img_y, img_channels = x_train[0].shape
     (num_classes,) = y_train[0].shape
-    # get CNN model
-    model = get_model((img_x, img_y, img_channels), num_classes)
     # run training
     model.fit(x_train, y_train, batch_size=batch_size, epochs=epochs,
-              verbose=1, callbacks=[history])
-
-    #  score = model.evaluate(x_test, y_test, verbose=0)
-    #  print("Test loss: ", score[0])
-    #  print("Test accuracy: ", score[1])
+              verbose=1, validation_data=(x_train, y_train), callbacks=[history])
     return model
