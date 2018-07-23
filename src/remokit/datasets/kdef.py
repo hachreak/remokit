@@ -17,11 +17,12 @@ _label = {
 }
 
 
-def get_data(directory, batch_size=None):
+def get_data(files_stream, batch_size=None):
     batch_size = batch_size or 100
 
-    files = dataset.get_files(directory)
-    loader = dataset.loader(dataset.stream_batch(files, batch_size))
+    loader = dataset.loader(
+        dataset.stream_batch(files_stream, batch_size)
+    )
     for filename, img in loader:
         yield _get_label(filename), img
 
