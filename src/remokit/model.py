@@ -7,8 +7,7 @@ from keras.losses import categorical_crossentropy
 from keras.optimizers import Adam
 
 
-def get_model(img_x, img_y, img_channels, num_classes):
-    input_shape = (img_x, img_y, img_channels)
+def get_model(input_shape, num_classes):
     model = Sequential()
 
     model.add(Conv2D(32, kernel_size=(5, 5), strides=(1, 1), activation='relu',
