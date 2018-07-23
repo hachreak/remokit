@@ -37,9 +37,9 @@ setup(
     keywords='machine learning',
     packages={'': 'src'},  # packages,  # Required
     install_requires=[
-        'numpy',
-        'keras',
-        'tensorflow',
+        'numpy>=1.14.5',
+        'Keras>=2.2.0',
+        'tensorflow>=1.9.0',
         'dlib>=19.15.0',
     ],
     extras_require={  # Optional
