@@ -43,10 +43,18 @@ def detect(detector, img):
 
 
 def shapes(img, predictor, detected):
+    """Get detected face shapes."""
     ret = []
     for (k, v) in detected.items():
         ret.append(predictor(img, v['detected']))
     return ret
+
+
+def align(img, shapes, size=150):
+    faces = dlib.full_object_detections()
+    for shape in shapes:
+        faces.append(shape)
+    return dlib.get_face_chips(img, faces, size=size)
 
 
 def shape2matrix(feature):
@@ -63,9 +71,9 @@ def expand2img(matrix):
     maxval = matrix.max(axis=0)
     cols = maxval.item(0) + 1
     rows = maxval.item(1) + 1
-    img = np.zeros((cols, rows, 1), dtype='int')
+    img = np.zeros((cols, rows), dtype='int')
     for row in matrix:
         y = row.item(0)
         x = row.item(1)
-        img[y][x][0] = 255
+        img[y][x] = 255
     return img
