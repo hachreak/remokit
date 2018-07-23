@@ -39,7 +39,8 @@ setup(
     install_requires=[
         'numpy',
         'keras',
-        'tensorflow'
+        'tensorflow',
+        'dlib>=19.15.0',
     ],
     extras_require={  # Optional
         'dev': ['check-manifest'],
