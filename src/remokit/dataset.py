@@ -23,7 +23,6 @@ def get_files(directory):
     """Get list of images."""
     for root, dirnames, files in os.walk(directory):
         for name in files:
-            print("get file: ", os.path.join(root, name))
             yield os.path.join(root, name)
 
 
@@ -66,7 +65,6 @@ def loader(batches):
             images.append((filename, detect.load_img(filename)))
         # yield one by one
         for (filename, image) in images:
-            print("loader: ", filename)
             yield filename, image
 
 
