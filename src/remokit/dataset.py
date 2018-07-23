@@ -32,7 +32,7 @@ def first(stream, size):
     for value in stream:
         yield value
         index += 1
-        if value >= size:
+        if index >= size:
             raise StopIteration
 
 
