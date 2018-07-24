@@ -110,7 +110,10 @@ def feature2input(features):
 
 def label2category(label):
     return _category[label]
-    #  return [_category[label] for label in labels]
+
+
+def category2label(category):
+    return np.argmax(category)
 
 #  def get_data():
 #      img = detector.load_img(
