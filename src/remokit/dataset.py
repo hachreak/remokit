@@ -20,13 +20,14 @@ _category = {
 
 
 def get_files(directory):
-    """Get list of images."""
+    """Get list of images reading recursively."""
     for root, dirnames, files in os.walk(directory):
         for name in files:
             yield os.path.join(root, name)
 
 
 def first(stream, size):
+    """Get only first `size` from the stream."""
     index = 0
     for value in stream:
         yield value
@@ -36,6 +37,7 @@ def first(stream, size):
 
 
 def batch(block, size):
+    """Split in batches the input."""
     for block in np.array_split(block, size):
         yield block
 
@@ -47,7 +49,6 @@ def stream_batch(stream, size):
         try:
             for i in range(size):
                 value = next(stream)
-                #  import ipdb; ipdb.set_trace()
                 batch.append(value)
             yield batch
         except StopIteration:
@@ -69,6 +70,7 @@ def loader(batches):
 
 
 def stream_training(stream, detector, predictor, img_x=None, img_y=None):
+    """Get new x_train/y_train values as streaming."""
     img_x = img_x or 100
     img_y = img_y or 100
     for label, img in stream:
@@ -83,6 +85,7 @@ def stream_training(stream, detector, predictor, img_x=None, img_y=None):
 
 
 def _batch_train(stream, size=None):
+    """Transform a single x_train/y_train stream in a batch stream."""
     for batch in stream_batch(stream, size):
         x_train = []
         y_train = []
@@ -93,14 +96,15 @@ def _batch_train(stream, size=None):
         yield x_train, np.array(y_train)
 
 
-def batch_training(stream, detector, predictor, size,
-                   img_x=None, img_y=None):
+def batch_training(stream, detector, predictor, size, img_x=None, img_y=None):
+    """Get a batch streaming training of x_test/y_test."""
     return _batch_train(
         stream_training(stream, detector, predictor, img_x, img_y), size
     )
 
 
 def feature2input(features):
+    """Transform a image feature in a input for the CNN."""
     (img_x, img_y) = features[0].shape
     features = features.reshape(features.shape[0], img_x, img_y, 1)
     features = features.astype('float32')
@@ -109,25 +113,10 @@ def feature2input(features):
 
 
 def label2category(label):
+    """Convert label to category."""
     return _category[label]
 
 
 def category2label(category):
+    """Convert category to label."""
     return np.argmax(category)
-
-#  def get_data():
-#      img = detector.load_img(
-#          "/home/hachreak/Downloads/dlib/examples/faces/2007_007763.jpg")
-#      d = detector.get_detector()
-#      p = detector.get_predictor(
-#          "/tmp/shape_predictor_68_face_landmarks.dat/shape_predictor_68_face_landmarks.dat")
-#      dets = detector.detect(d, img)
-#      feats = detector.shapes(img, p, dets)
-#      feat = feats[0]
-#      mat = detector.shape2matrix(feat)
-#      imgf = detector.expand2img(mat)
-#      imgf /= 255
-#      y_test = np.array([1])
-#      y_test = to_categorical(y_test, 7)
-#      x_test = np.array([imgf])
-#      return (x_test, y_test), (x_test, y_test)

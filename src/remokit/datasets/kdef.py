@@ -18,6 +18,7 @@ _label = {
 
 
 def get_data(files_stream, batch_size=None):
+    """Get a streaming of label/image to process."""
     batch_size = batch_size or 100
 
     loader = dataset.loader(
@@ -28,5 +29,6 @@ def get_data(files_stream, batch_size=None):
 
 
 def _get_label(filename):
+    """Convert a 2 chars label to a full name label."""
     key = os.path.basename(filename)[4:6]
     return _label[key]

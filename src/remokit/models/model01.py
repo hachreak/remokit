@@ -1,5 +1,8 @@
 
-"""Model definition."""
+"""Model 01 definition.
+
+See paper: `The Role of Coherence in Facial Expression Recognition`
+"""
 
 from keras import Sequential
 from keras.layers import Dense, Flatten, Conv2D, MaxPooling2D
