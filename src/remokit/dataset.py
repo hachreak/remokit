@@ -79,7 +79,7 @@ def stream_training(stream, detector, predictor, img_x=None, img_y=None):
         for shape in shapes:
             feature = detect.expand2img(detect.shape2matrix(shape))
             yield (
-                to_categorical(label2category(label), 7),
+                to_categorical(label2category(label), len(_category)),
                 dlib.resize_image(feature, img_x, img_y)
             )
 
