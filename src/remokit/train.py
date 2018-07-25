@@ -23,19 +23,13 @@ def compile_(model):
     return model
 
 
-def run(model, train, batch_size=None, epochs=None, history=None):
+def run(model, batches, steps_per_epoch, epochs, history=None):
     """Run training."""
-    batch_size = batch_size or 128
-    epochs = epochs or 10
     history = history or AccuracyHistory()
+    model.fit_generator(
+        generator=batches, max_queue_size=1, verbose=1,
+        steps_per_epoch=steps_per_epoch, epochs=epochs,
+        callbacks=[history]
 
-    x_train, y_train = train
-
-    img_x, img_y, img_channels = x_train[0].shape
-    (num_classes,) = y_train[0].shape
-
-    # run training
-    model.fit(x_train, y_train, batch_size=batch_size, epochs=epochs,
-              verbose=1, validation_data=(x_train, y_train),
-              callbacks=[history])
+    )
     return model

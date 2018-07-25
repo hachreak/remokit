@@ -4,7 +4,7 @@ Dataset source: www.emotionlab.se/resources/kdef
 """
 
 import os
-from .. import dataset
+from .. import detect
 
 _label = {
     'NE': 'neutral',
@@ -17,15 +17,10 @@ _label = {
 }
 
 
-def get_data(files_stream, batch_size=None):
+def get_data(files_stream):
     """Get a streaming of label/image to process."""
-    batch_size = batch_size or 100
-
-    loader = dataset.loader(
-        dataset.stream_batch(files_stream, batch_size)
-    )
-    for filename, img in loader:
-        yield get_label(filename), img
+    for filename in files_stream:
+        yield get_label(filename), detect.load_img(filename)
 
 
 def get_label(filename):

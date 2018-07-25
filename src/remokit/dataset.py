@@ -77,18 +77,6 @@ def stream_batch(stream, size):
             yield batch
 
 
-def loader(batches):
-    """Load images in batch from disk."""
-    for block in batches:
-        images = []
-        # load in a single row
-        for filename in block:
-            images.append((filename, detect.load_img(filename)))
-        # yield one by one
-        for (filename, image) in images:
-            yield filename, image
-
-
 def stream_training(stream, detector, predictor, img_x=None, img_y=None):
     """Get new x_train/y_train values as streaming."""
     img_x = img_x or 100
