@@ -19,6 +19,26 @@ _category = {
 }
 
 
+def epochs(filenames, epochs=1):
+    """Repeat filenames epochs times."""
+    for _ in range(0, epochs):
+        for name in filenames:
+            yield name
+
+
+def kfold_split(filenames, get_label, k=10, index=0):
+    """Split filenames in validation and training partitions."""
+    per_category = files_per_category(filenames, get_label)
+    validation = []
+    testing = []
+    for names in per_category.values():
+        slices = np.array_split(names, k)
+        validation.extend(slices.pop(index))
+        for s in slices:
+            testing.extend(s)
+    return validation, testing
+
+
 def files_per_category(filenames, get_label):
     """Return filenames per categories."""
     # init dict
