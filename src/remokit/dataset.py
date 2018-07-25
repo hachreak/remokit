@@ -6,6 +6,7 @@ import os
 import numpy as np
 from remokit import detect
 from keras.utils import to_categorical
+from detect import get_detector, get_predictor
 
 
 _category = {
@@ -19,11 +20,22 @@ _category = {
 }
 
 
+def ordered_categories():
+    """Get the ordered version of categories."""
+    cats = {v: k for k, v in _category.iteritems()}
+    return [cats[v] for v in range(0, 6)]
+
+
 def epochs(filenames, epochs=1):
     """Repeat filenames epochs times."""
     for _ in range(0, epochs):
         for name in filenames:
             yield name
+
+
+def kfold_count(files, k):
+    count = len(files) // k
+    return count
 
 
 def kfold_split(filenames, get_label, k=10, index=0):
@@ -148,3 +160,16 @@ def label2category(label):
 def category2label(category):
     """Convert category to label."""
     return np.argmax(category)
+
+
+def build_batches(files, get_data, get_label, k, index, batch_size, n_epochs,
+                  img_x, img_y, shape_predictor):
+    """Build a batch stream of images."""
+    detector = get_detector()
+    predictor = get_predictor(shape_predictor)
+
+    files = epochs(files, epochs=n_epochs)
+    stream = get_data(files)
+
+    return batch_training(stream, detector, predictor,
+                          size=batch_size, img_x=img_x, img_y=img_y)
