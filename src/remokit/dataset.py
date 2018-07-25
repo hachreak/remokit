@@ -19,6 +19,18 @@ _category = {
 }
 
 
+def files_per_category(filenames, get_label):
+    """Return filenames per categories."""
+    # init dict
+    result = {}
+    for cat in _category.keys():
+        result[cat] = []
+    # split files
+    for filename in filenames:
+        result[get_label(filename)].append(filename)
+    return result
+
+
 def count(directory, types=None):
     """Count how many files."""
     return len(list(get_files(directory=directory, types=types)))
