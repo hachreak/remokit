@@ -25,10 +25,10 @@ def get_data(files_stream, batch_size=None):
         dataset.stream_batch(files_stream, batch_size)
     )
     for filename, img in loader:
-        yield _get_label(filename), img
+        yield get_label(filename), img
 
 
-def _get_label(filename):
+def get_label(filename):
     """Convert a 2 chars label to a full name label."""
     key = os.path.basename(filename)[4:6]
     return _label[key]
