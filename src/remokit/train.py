@@ -1,6 +1,8 @@
 
 """Train the model."""
 
+from keras.losses import categorical_crossentropy
+from keras.optimizers import Adam
 from keras.callbacks import Callback
 
 
@@ -13,6 +15,14 @@ class AccuracyHistory(Callback):
         self.acc.append(logs.get('acc'))
 
 
+def compile_(model):
+    """Compile model before train."""
+    # compile model
+    model.compile(loss=categorical_crossentropy, optimizer=Adam(),
+                  metrics=['accuracy'])
+    return model
+
+
 def run(model, train, batch_size=None, epochs=None, history=None):
     """Run training."""
     batch_size = batch_size or 128
@@ -23,6 +33,7 @@ def run(model, train, batch_size=None, epochs=None, history=None):
 
     img_x, img_y, img_channels = x_train[0].shape
     (num_classes,) = y_train[0].shape
+
     # run training
     model.fit(x_train, y_train, batch_size=batch_size, epochs=epochs,
               verbose=1, validation_data=(x_train, y_train),

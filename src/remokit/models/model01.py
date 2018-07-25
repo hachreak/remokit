@@ -6,8 +6,6 @@ See paper: `The Role of Coherence in Facial Expression Recognition`
 
 from keras import Sequential
 from keras.layers import Dense, Flatten, Conv2D, MaxPooling2D
-from keras.losses import categorical_crossentropy
-from keras.optimizers import Adam
 
 
 def get_model(input_shape, num_classes):
@@ -21,8 +19,5 @@ def get_model(input_shape, num_classes):
     model.add(Flatten())
     model.add(Dense(1000, activation='relu'))
     model.add(Dense(num_classes, activation='softmax'))
-
-    model.compile(loss=categorical_crossentropy, optimizer=Adam(),
-                  metrics=['accuracy'])
 
     return model
