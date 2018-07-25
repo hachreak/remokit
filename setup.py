@@ -41,6 +41,7 @@ setup(
         'Keras>=2.2.0',
         'tensorflow>=1.9.0',
         'dlib>=19.15.0',
+        'scikit-learn>=0.19.2',
     ],
     extras_require={  # Optional
         'dev': ['check-manifest'],
