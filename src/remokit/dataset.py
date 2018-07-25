@@ -19,11 +19,19 @@ _category = {
 }
 
 
-def get_files(directory):
+def count(directory, types=None):
+    """Count how many files."""
+    return len(list(get_files(directory=directory, types=types)))
+
+
+def get_files(directory, types=None):
     """Get list of images reading recursively."""
+    types = types or ['.jpg']
     for root, dirnames, files in os.walk(directory):
         for name in files:
-            yield os.path.join(root, name)
+            _, ext = os.path.splitext(name)
+            if ext.lower() in types:
+                yield os.path.join(root, name)
 
 
 def first(stream, size):
