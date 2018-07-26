@@ -18,10 +18,8 @@
 
 """Get dataset."""
 
-import dlib
 import os
 import numpy as np
-from remokit import detect
 from keras.utils import to_categorical
 
 
@@ -46,7 +44,7 @@ def categorical(stream):
 def ordered_categories():
     """Get the ordered version of categories."""
     cats = {v: k for k, v in _category.iteritems()}
-    return [cats[v] for v in range(0, 6)]
+    return [cats[v] for v in range(0, 7)]
 
 
 def epochs(filenames, epochs=1):
