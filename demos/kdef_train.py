@@ -29,12 +29,11 @@ from kdef_pipeline import training
 
 num_classes = len(_category)
 index = 0
-k = 7
 batch_size = 10
-epochs = 5
+epochs = 10
 
 (shape, epochs, steps_per_epoch, batches) = training(
-    index, k, batch_size, epochs
+    index, batch_size, epochs
 )
 
 # get CNN model

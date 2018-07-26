@@ -25,16 +25,16 @@ from remokit import dataset
 #  from remokit.dataset import _category
 #  from remokit.models.model01 import get_model
 #  from remokit.train import run, compile_
-from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.metrics import classification_report, confusion_matrix, \
+        accuracy_score
 
 from kdef_pipeline import validating
 
 
 index = 0
-k = 7
-batch_size = 7
+batch_size = 10
 
-(batches, y_val) = validating(index, k, batch_size)
+(batches, y_val) = validating(index, batch_size)
 
 steps = len(y_val) // batch_size
 
@@ -46,6 +46,7 @@ y_pred = model.predict_generator(batches, steps=steps)
 print('Confusion Matrix')
 
 y_pred = [dataset.categorical2category(v) for v in y_pred]
+y_val = y_val[:len(y_pred)]
 y_val = [dataset._category[v] for v in y_val]
 
 matrix = confusion_matrix(y_val, y_pred)
@@ -54,3 +55,6 @@ print(matrix)
 report = classification_report(
     y_val, y_pred, target_names=dataset.ordered_categories())
 print(report)
+
+print("Accuracy")
+print(accuracy_score(y_val, y_pred))
