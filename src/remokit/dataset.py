@@ -38,9 +38,9 @@ _category = {
 
 def categorical(stream):
     """Convert label to categorical."""
-    for label, img in stream:
+    for img, label in stream:
         cat = to_categorical(label2category(label), len(_category))
-        yield cat, img
+        yield img, cat
 
 
 def ordered_categories():
