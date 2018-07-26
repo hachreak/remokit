@@ -23,7 +23,6 @@ import os
 import numpy as np
 from remokit import detect
 from keras.utils import to_categorical
-from detect import get_detector, get_predictor
 
 
 _category = {
@@ -37,6 +36,13 @@ _category = {
 }
 
 
+def categorical(stream):
+    """Convert label to categorical."""
+    for label, img in stream:
+        cat = to_categorical(label2category(label), len(_category))
+        yield cat, img
+
+
 def ordered_categories():
     """Get the ordered version of categories."""
     cats = {v: k for k, v in _category.iteritems()}
@@ -48,11 +54,6 @@ def epochs(filenames, epochs=1):
     for _ in range(0, epochs):
         for name in filenames:
             yield name
-
-
-def kfold_count(files, k):
-    count = len(files) // k
-    return count
 
 
 def kfold_split(filenames, get_label, k=10, index=0):
@@ -116,57 +117,17 @@ def stream_batch(stream, size):
     while True:
         batch = []
         try:
+            x = []
+            y = []
             for i in range(size):
-                value = next(stream)
-                batch.append(value)
-            yield batch
+                y_value, x_value = next(stream)
+                x.append(x_value)
+                y.append(y_value)
+            yield np.array(x), np.array(y)
         except StopIteration:
             if not batch:
                 raise StopIteration
             yield batch
-
-
-def stream_training(stream, detector, predictor, img_x=None, img_y=None):
-    """Get new x_train/y_train values as streaming."""
-    img_x = img_x or 100
-    img_y = img_y or 100
-    for label, img in stream:
-        dets = detect.detect(detector, img)
-        shapes = detect.shapes(img, predictor, dets)
-        for shape in shapes:
-            feature = detect.expand2img(detect.shape2matrix(shape))
-            yield (
-                to_categorical(label2category(label), len(_category)),
-                dlib.resize_image(feature, img_x, img_y)
-            )
-
-
-def _batch_train(stream, size=None):
-    """Transform a single x_train/y_train stream in a batch stream."""
-    for batch in stream_batch(stream, size):
-        x_train = []
-        y_train = []
-        for label, img in batch:
-            x_train.append(img)
-            y_train.append(label)
-        x_train = feature2input(np.array(x_train))
-        yield x_train, np.array(y_train)
-
-
-def batch_training(stream, detector, predictor, size, img_x=None, img_y=None):
-    """Get a batch streaming training of x_test/y_test."""
-    return _batch_train(
-        stream_training(stream, detector, predictor, img_x, img_y), size
-    )
-
-
-def feature2input(features):
-    """Transform a image feature in a input for the CNN."""
-    (img_x, img_y) = features[0].shape
-    features = features.reshape(features.shape[0], img_x, img_y, 1)
-    features = features.astype('float32')
-    features /= 255
-    return features
 
 
 def label2category(label):
@@ -174,19 +135,6 @@ def label2category(label):
     return _category[label]
 
 
-def category2label(category):
+def categorical2category(category):
     """Convert category to label."""
     return np.argmax(category)
-
-
-def build_batches(files, get_data, get_label, k, index, batch_size, n_epochs,
-                  img_x, img_y, shape_predictor):
-    """Build a batch stream of images."""
-    detector = get_detector()
-    predictor = get_predictor(shape_predictor)
-
-    files = epochs(files, epochs=n_epochs)
-    stream = get_data(files)
-
-    return batch_training(stream, detector, predictor,
-                          size=batch_size, img_x=img_x, img_y=img_y)

@@ -15,32 +15,3 @@
 #
 # You should have received a copy of the GNU Lesser General Public License
 # along with pysenslog.  If not, see <http://www.gnu.org/licenses/>.
-
-"""Train CNN model01 with KDEF dataset."""
-
-from __future__ import absolute_import
-
-from remokit.dataset import _category
-from remokit.models.model01 import get_model
-from remokit.train import run, compile_
-
-from kdef_pipeline import training
-
-
-num_classes = len(_category)
-index = 0
-k = 7
-batch_size = 10
-epochs = 5
-
-(shape, epochs, steps_per_epoch, batches) = training(
-    index, k, batch_size, epochs
-)
-
-# get CNN model
-model = get_model(shape, num_classes)
-model = compile_(model)
-
-run(model, batches, steps_per_epoch, epochs)
-
-model.save("data/kdef_train_{0}.h5".format(index))
