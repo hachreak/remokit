@@ -28,20 +28,3 @@ def extract(shape_predictor, img_size):
                 yield cat, img
 
     return f
-
-
-def adapt(features):
-    """Adapt features to input for the CNN."""
-    (img_x, img_y) = features[0].shape
-    features = features.reshape(features.shape[0], img_x, img_y, 1)
-    features = features.astype('float32')
-    features /= 255
-    return features
-
-
-def batch_adapt(batches):
-    """Adapt a streaming batch."""
-    #  import ipdb; ipdb.set_trace()
-    for x, y in batches:
-        x = adapt(x)
-        yield x, y
