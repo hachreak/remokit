@@ -144,6 +144,12 @@ def label2category(label):
     return _category[label]
 
 
+def category2label(category):
+    """Category as number converted to label string."""
+    rev_cat = {v: k for k, v in _category.items()}
+    return rev_cat[category]
+
+
 def categorical2category(category):
     """Convert category to label."""
     return np.argmax(category)
