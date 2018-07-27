@@ -81,7 +81,8 @@ print('Confusion Matrix')
 
 matrix = confusion_matrix(y_val, y_pred)
 for i, row in enumerate(matrix):
-    print("{0} \t {1}".format(row, ordered_labels[i]))
+    to_print = ''.join(['{:4}'.format(item) for item in row])
+    print("{0:<15} {1}".format(ordered_labels[i], to_print))
 
 report = classification_report(y_val, y_pred, target_names=ordered_labels)
 print(report)
