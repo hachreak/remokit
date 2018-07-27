@@ -16,3 +16,16 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with pysenslog.  If not, see <http://www.gnu.org/licenses/>.
 
+
+from .. import dataset
+
+
+def get_filenames(index, k, directory, get_label):
+    """Get a list of validating/training files splittes with kfold."""
+    filenames = dataset.get_files(directory)
+    filenames = list(filenames)
+
+    v, t = dataset.kfold_split(
+        filenames, get_label=get_label, k=k, index=index
+    )
+    return v, t

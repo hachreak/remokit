@@ -54,7 +54,7 @@ def epochs(filenames, epochs=1):
             yield name
 
 
-def kfold_split(filenames, get_label, k=10, index=0):
+def kfold_split(filenames, get_label, k=10, index=0, shuffle=True):
     """Split filenames in validation and training partitions."""
     per_category = files_per_category(filenames, get_label)
     validation = []
@@ -64,6 +64,8 @@ def kfold_split(filenames, get_label, k=10, index=0):
         validation.extend(slices.pop(index))
         for s in slices:
             testing.extend(s)
+    if shuffle:
+        np.random.shuffle(testing)
     return validation, testing
 
 
