@@ -137,7 +137,7 @@ def stream_batch(stream, size):
             x = []
             y = []
             for i in range(size):
-                y_value, x_value = next(stream)
+                x_value, y_value = next(stream)
                 x.append(x_value)
                 y.append(y_value)
             yield np.array(x), np.array(y)

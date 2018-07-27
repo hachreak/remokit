@@ -15,7 +15,6 @@ def extract(shape_predictor, img_size):
     img_y = img_y or 100
 
     def f(stream):
-        # FIXME invert img, label
         for img, cat in stream:
             width = 100
             height = img.shape[1] * 100 / img.shape[0]
@@ -25,6 +24,6 @@ def extract(shape_predictor, img_size):
             for shape in shapes:
                 feature = detect.expand2img(detect.shape2matrix(shape))
                 img = dlib.resize_image(feature, img_x, img_y)
-                yield cat, img
+                yield img, cat
 
     return f
