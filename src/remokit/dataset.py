@@ -19,6 +19,7 @@
 """Get dataset."""
 
 import os
+import cv2
 import numpy as np
 from keras.utils import to_categorical
 
@@ -34,20 +35,12 @@ _category = {
 }
 
 
-def adapt(features):
-    """Adapt features to input for the CNN."""
-    (img_x, img_y) = features[0].shape
-    features = features.reshape(features.shape[0], img_x, img_y, 1)
-    features = features.astype('float32')
-    features /= 255
-    return features
-
-
-def batch_adapt(batches):
+def batch_adapt(batches, adapters):
     """Adapt a streaming batch."""
     #  import ipdb; ipdb.set_trace()
     for x, y in batches:
-        x = adapt(x)
+        for adapter in adapters:
+            x = adapter(x)
         yield x, y
 
 

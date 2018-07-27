@@ -1,7 +1,7 @@
 
 """Kdef demo pipeline."""
 
-from remokit import dataset
+from remokit import dataset, adapters
 from remokit.datasets.kdef import get_data, get_label
 from remokit.preprocessing import features
 from remokit.datasets import kdef
@@ -20,7 +20,10 @@ def _get_batches(filenames, img_x, img_y, shape_predictor, batch_size):
     stream = features.extract(shape_predictor, (img_x, img_y))(stream)
 
     batches = dataset.stream_batch(stream, batch_size)
-    batches = dataset.batch_adapt(batches)
+    batches = dataset.batch_adapt(batches, [
+        adapters.matrix_to_bn,
+        adapters.normalize
+    ])
 
     return batches
 
