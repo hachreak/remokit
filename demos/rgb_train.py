@@ -16,10 +16,11 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with pysenslog.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Train CNN model01 with KDEF dataset eye only."""
+"""Train CNN model01 with colored image dataset."""
 
 from __future__ import absolute_import
 
+import sys
 from remokit import dataset, adapters
 from remokit.datasets import get_filenames
 from remokit.datasets.kdef import get_data, get_label
@@ -27,14 +28,26 @@ from remokit.models.model01 import get_model
 from remokit.train import run, compile_
 
 
-directory = "data/KDEF-straight_cut/eyes-mouth/eyes"
-index = 0
-k = 10
-batch_size = 5
-epochs = 20
+if len(sys.argv) < 9:
+    msg = ("Usage: {0} "
+           "[directory] [img_x] [img_y] [index] [k] [batch_size] [epochs] "
+           "[model.h5]")
+    print(msg.format(sys.argv[0]))
+    sys.exit(1)
+
+directory = sys.argv[1]
+img_x = int(sys.argv[2])
+img_y = int(sys.argv[3])
+index = int(sys.argv[4])
+k = int(sys.argv[5])
+batch_size = int(sys.argv[6])
+epochs = int(sys.argv[7])
+model_file = sys.argv[8]
+
+# Start training
+
 num_classes = len(dataset._category)
-shape = 100, 100, 1
-img_x, img_y, _ = shape
+shape = img_x, img_y, 1
 
 validating, training = get_filenames(index, k, directory, get_label)
 
@@ -59,4 +72,4 @@ model = compile_(model)
 
 run(model, batches, steps_per_epoch, epochs)
 
-model.save("data/kdef_eye_train_{0}.h5".format(index))
+model.save(model_file)

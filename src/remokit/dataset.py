@@ -19,7 +19,6 @@
 """Get dataset."""
 
 import os
-import cv2
 import numpy as np
 from keras.utils import to_categorical
 
@@ -38,10 +37,10 @@ _category = {
 def batch_adapt(batches, adapters):
     """Adapt a streaming batch."""
     #  import ipdb; ipdb.set_trace()
-    for x, y in batches:
+    for batch in batches:
         for adapter in adapters:
-            x = adapter(x)
-        yield x, y
+            batch = adapter(batch=batch)
+        yield batch
 
 
 def categorical(stream):
@@ -148,3 +147,8 @@ def label2category(label):
 def categorical2category(category):
     """Convert category to label."""
     return np.argmax(category)
+
+
+def list_apply(fun, args):
+    """Apply function to each argument of the list."""
+    return [fun(arg) for arg in args]

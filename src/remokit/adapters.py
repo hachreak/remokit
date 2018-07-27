@@ -23,31 +23,47 @@ import numpy as np
 import dlib
 
 
-def rgb_to_bn(features):
+def rgb_to_bn(batch):
     """Adapt rgb image to input for the CNN as b/n image."""
-    return np.array(
-        [cv2.cvtColor(f, cv2.COLOR_RGB2GRAY) for f in features]
+    (x, y) = batch
+    x = np.array(
+        [cv2.cvtColor(f, cv2.COLOR_RGB2GRAY) for f in x]
     )
+    return x, y
 
 
-def matrix_to_bn(features):
+def matrix_to_bn(batch):
     """Adapt matrix to input for the CNN as b/n image."""
-    (img_x, img_y) = features[0].shape
-    features = features.reshape(features.shape[0], img_x, img_y, 1)
-    return features
+    (x, y) = batch
+    (img_x, img_y) = x[0].shape
+    x = x.reshape(x.shape[0], img_x, img_y, 1)
+    return x, y
 
 
-def normalize(features):
-    """Normalize features."""
-    features = features.astype('float32')
-    features /= 255
-    return features
+def normalize(batch):
+    """Normalize batch."""
+    (x, y) = batch
+    x = x.astype('float32')
+    x /= 255
+    return x, y
 
 
 def resize(img_x, img_y):
     """Resize images."""
-    def f(features):
-        return np.array([
-            dlib.resize_image(feature, img_x, img_y) for feature in features
-        ])
+    def f(batch):
+        (x, y) = batch
+        x = np.array([dlib.resize_image(f, img_x, img_y) for f in x])
+        return x, y
     return f
+
+
+class extract_labels(object):
+    """Extract processed labels."""
+
+    def __init__(self):
+        self.labels = []
+
+    def __call__(self, batch, *args, **kwargs):
+        (x, y) = batch
+        self.labels.extend(y)
+        return batch
