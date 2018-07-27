@@ -49,7 +49,9 @@ model_file = sys.argv[7]
 shape = img_x, img_y, 1
 img_x, img_y, _ = shape
 
-validating, training = get_filenames(index, k, directory, get_label)
+validating, training = get_filenames(
+    index, k, directory, get_label, batch_size
+)
 
 steps_per_epoch = len(validating) // batch_size
 

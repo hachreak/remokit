@@ -16,11 +16,12 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with pysenslog.  If not, see <http://www.gnu.org/licenses/>.
 
+import random
 
 from .. import dataset
 
 
-def get_filenames(index, k, directory, get_label):
+def get_filenames(index, k, directory, get_label, batch_size):
     """Get a list of validating/training files splittes with kfold."""
     filenames = dataset.get_files(directory)
     filenames = list(filenames)
@@ -28,4 +29,14 @@ def get_filenames(index, k, directory, get_label):
     v, t = dataset.kfold_split(
         filenames, get_label=get_label, k=k, index=index
     )
-    return v, t
+    return _fill(v, batch_size), _fill(t, batch_size)
+
+
+def _fill(filenames, batch_size):
+    rest = len(filenames) % batch_size
+    if rest > 0:
+        rest = batch_size - rest
+        index = random.randrange(len(filenames) - rest)
+        end = index + rest
+        filenames.extend(filenames[index:end])
+    return filenames

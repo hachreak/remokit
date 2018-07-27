@@ -50,7 +50,9 @@ model_file = sys.argv[8]
 num_classes = len(dataset._category)
 shape = img_x, img_y, 1
 
-validating, training = get_filenames(index, k, directory, get_label)
+validating, training = get_filenames(
+    index, k, directory, get_label, batch_size
+)
 
 steps_per_epoch = len(training) // batch_size
 
