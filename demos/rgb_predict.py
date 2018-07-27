@@ -75,13 +75,15 @@ y_pred = model.predict_generator(batches, steps=steps_per_epoch)
 y_val = dataset.list_apply(dataset.categorical2category, get_labels.labels)
 y_pred = dataset.list_apply(dataset.categorical2category, y_pred)
 
+ordered_labels = dataset.ordered_categories()
+
 print('Confusion Matrix')
 
 matrix = confusion_matrix(y_val, y_pred)
-print(matrix)
+for i, row in enumerate(matrix):
+    print("{0} \t {1}".format(row, ordered_labels[i]))
 
-report = classification_report(
-    y_val, y_pred, target_names=dataset.ordered_categories())
+report = classification_report(y_val, y_pred, target_names=ordered_labels)
 print(report)
 
 print("Accuracy")
