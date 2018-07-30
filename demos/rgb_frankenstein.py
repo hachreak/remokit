@@ -30,6 +30,8 @@ from remokit.datasets import get_filenames
 from remokit.utils import load_fun
 from remokit.train import compile_, run
 from keras.models import load_model
+from sklearn.metrics import classification_report, confusion_matrix, \
+        accuracy_score
 
 
 def get_names_only(filenames):
@@ -40,7 +42,7 @@ def attach_basepath(basepath, names):
     return [os.path.join(basepath, name) for name in names]
 
 
-def get_training_filenames(config):
+def get_names(config, is_training=True):
     directory = config['directory']
     model_index = 0
     get_label = load_fun(config['submodels'][model_index]['get_label'])
@@ -52,7 +54,12 @@ def get_training_filenames(config):
         index, k, directory, get_label, batch_size
     )
 
-    return get_names_only(training)
+    if is_training:
+        filenames = training
+    else:
+        filenames = validating
+
+    return get_names_only(filenames)
 
 
 def prepare_batch(config, filenames):
@@ -83,11 +90,11 @@ def prepare_batch(config, filenames):
         # input shape
         (_, img_x, img_y, _) = conv.input_shape
 
-        #  get_labels = adapters.extract_labels()
+        get_labels = adapters.extract_labels()
 
         batches = dataset.stream_batch(stream, batch_size)
         batches = dataset.batch_adapt(batches, [
-            #  get_labels,
+            get_labels,
             adapters.rgb_to_bn,
             adapters.resize(img_x, img_y),
             adapters.matrix_to_bn,
@@ -97,38 +104,64 @@ def prepare_batch(config, filenames):
 
         batches_list.append(batches)
 
-    return dataset.merge_batches(batches_list), output_shape
+    return dataset.merge_batches(batches_list), output_shape, get_labels
 
 
 # Load config
 
 if len(sys.argv) < 2:
-    msg = "Usage: {0} config.json"
+    msg = "Usage: {0} config.json [train|predict]"
     print(msg.format(sys.argv[0]))
     sys.exit(1)
 
 # Start
 
+is_training = sys.argv[2] if len(sys.argv) > 2 else 'train'
+is_training = is_training == 'train'
+
 config_file = sys.argv[1]
 with open(config_file) as data_file:
     config = json.load(data_file)
 
-filenames = get_training_filenames(config)
+filenames = get_names(config, is_training=is_training)
 
 batch_size = config['train']['batch_size']
 steps_per_epoch = len(filenames) // batch_size
 
-batches, output_shape = prepare_batch(config, filenames)
+batches, output_shape, get_labels = prepare_batch(config, filenames)
 
 num_classes = len(dataset._category)
 epochs = config['train']['epochs']
 
 # get CNN model
 get_model = load_fun(config['model'])
-model = get_model(output_shape, num_classes)
-model = compile_(model)
 
-run(model, batches, steps_per_epoch, epochs)
+if is_training:
+    model = get_model(output_shape, num_classes)
+    model = compile_(model)
+    run(model, batches, steps_per_epoch, epochs)
+    model.save(config['result'])
+    print("hello")
+else:
+    model = load_model(config['result'])
 
-model.save(config['result'])
-print("hello")
+    y_pred = model.predict_generator(batches, steps=steps_per_epoch)
+
+    y_pred = dataset.list_apply(dataset.categorical2category, y_pred)
+    y_val = dataset.list_apply(dataset.categorical2category, get_labels.labels)
+    y_val = y_val[:len(y_pred)]
+
+    ordered_labels = dataset.ordered_categories()
+
+    print('Confusion Matrix')
+
+    matrix = confusion_matrix(y_val, y_pred)
+    for i, row in enumerate(matrix):
+        to_print = ''.join(['{:4}'.format(item) for item in row])
+        print("{0:<15} {1}".format(ordered_labels[i], to_print))
+
+    report = classification_report(y_val, y_pred, target_names=ordered_labels)
+    print(report)
+
+    print("Accuracy")
+    print(accuracy_score(y_val, y_pred))
