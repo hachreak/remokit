@@ -20,8 +20,8 @@
     "directory": "data/KDEF-straight_cut/eyes-mouth/eyes",
     "model": "remokit.models.model02.get_model",
     "train": {
-        "batch_size": 20,
-        "epochs": 10
+        "batch_size": 10,
+        "epochs": 7
     },
     "seed": 0,
     "result": "data/rgb_frankenstein.h5"
