@@ -21,7 +21,7 @@
     "model": "remokit.models.model02.get_model",
     "train": {
         "batch_size": 20,
-        "epochs": 20
+        "epochs": 10
     },
     "result": "data/rgb_frankenstein.h5"
 }

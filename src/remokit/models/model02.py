@@ -25,8 +25,8 @@ from keras.layers import Dense
 def get_model(input_shape, num_classes):
     model = Sequential()
 
-    model.add(Dense(1, activation='relu', input_dim=input_shape))
-    model.add(Dense(input_shape // 2, activation='relu'))
+    nn = input_shape // 4
+    model.add(Dense(nn, activation='relu', input_dim=input_shape))
     model.add(Dense(num_classes, activation='softmax'))
 
     return model
