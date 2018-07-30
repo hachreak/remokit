@@ -23,6 +23,7 @@ from __future__ import absolute_import
 import os
 import json
 import sys
+from random import seed
 from copy import deepcopy
 from remokit import dataset, adapters
 from remokit.models import get_conv_layers
@@ -116,12 +117,16 @@ if len(sys.argv) < 2:
 
 # Start
 
+# check if train or predict
 is_training = sys.argv[2] if len(sys.argv) > 2 else 'train'
 is_training = is_training == 'train'
 
+# load config file
 config_file = sys.argv[1]
 with open(config_file) as data_file:
     config = json.load(data_file)
+
+seed(config['seed'])
 
 filenames = get_names(config, is_training=is_training)
 
@@ -141,7 +146,6 @@ if is_training:
     model = compile_(model)
     run(model, batches, steps_per_epoch, epochs)
     model.save(config['result'])
-    print("hello")
 else:
     model = load_model(config['result'])
 

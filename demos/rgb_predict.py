@@ -21,6 +21,8 @@
 from __future__ import absolute_import
 
 import sys
+from datetime import datetime
+from random import seed
 from keras.models import load_model
 from remokit import dataset, adapters
 from remokit.datasets import get_filenames
@@ -32,7 +34,7 @@ from sklearn.metrics import classification_report, confusion_matrix, \
 if len(sys.argv) < 8:
     msg = ("Usage: {0} "
            "[directory] [img_x] [img_y] [index] [k] [batch_size] "
-           "[model.h5]")
+           "[model.h5] [seed]")
     print(msg.format(sys.argv[0]))
     sys.exit(1)
 
@@ -43,8 +45,11 @@ index = int(sys.argv[4])
 k = int(sys.argv[5])
 batch_size = int(sys.argv[6])
 model_file = sys.argv[7]
+seed_value = sys.argv[8] if len(sys.argv) > 8 else datetime.now()
 
 # Start predict
+
+seed(seed_value)
 
 shape = img_x, img_y, 1
 img_x, img_y, _ = shape
