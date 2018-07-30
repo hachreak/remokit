@@ -27,8 +27,8 @@ from random import seed
 from remokit import dataset, adapters
 from remokit.datasets import get_filenames
 from remokit.datasets.kdef import get_data, get_label
-from remokit.models.model01 import get_model
 from remokit.train import run, compile_
+from remokit.utils import load_fun
 
 
 if len(sys.argv) < 9:
@@ -46,7 +46,8 @@ k = int(sys.argv[5])
 batch_size = int(sys.argv[6])
 epochs = int(sys.argv[7])
 model_file = sys.argv[8]
-seed_value = sys.argv[9] if len(sys.argv) > 9 else datetime.now()
+get_model = load_fun(sys.argv[9])
+seed_value = sys.argv[10] if len(sys.argv) > 10 else datetime.now()
 
 # Start training
 
