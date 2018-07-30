@@ -36,7 +36,6 @@ _category = {
 
 def batch_adapt(batches, adapters):
     """Adapt a streaming batch."""
-    #  import ipdb; ipdb.set_trace()
     for batch in batches:
         for adapter in adapters:
             batch = adapter(batch=batch)
@@ -139,6 +138,37 @@ def stream_batch(stream, size):
             yield batch
 
 
+def apply_to_x(fun):
+    """Apply function to X."""
+    def f(batch):
+        (Xblock, y) = batch
+        return (fun(Xblock), y)
+    return f
+
+
+def flatten(list_of_list):
+    """Flatten a list of list."""
+    result = []
+    for l in list_of_list:
+        result.extend(l)
+    return result
+
+
+def merge_batches(batches_list):
+    """Join multiple batches."""
+    while True:
+        X_list = None
+        y_list = None
+        for b in batches_list:
+            (X, y) = next(b)
+            if X_list is None:
+                X_list = [[] for _ in range(0, X.shape[0])]
+            for i, singlex in enumerate(X):
+                X_list[i].extend(singlex.flatten())
+            y_list = y
+        yield np.array(X_list), np.array(y_list)
+
+
 def label2category(label):
     """Convert label to category."""
     return _category[label]
@@ -158,3 +188,10 @@ def categorical2category(category):
 def list_apply(fun, args):
     """Apply function to each argument of the list."""
     return [fun(arg) for arg in args]
+
+
+def to_predict(model):
+    """Call predict as fun."""
+    def f(batch):
+        return model.predict(batch)
+    return f

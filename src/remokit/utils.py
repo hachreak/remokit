@@ -16,29 +16,13 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with pysenslog.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Model utilities."""
+"""Utils."""
 
-from keras.models import Model
-from keras import backend as K
-
-
-def submodel(model, last_layer):
-    """Get a submodel."""
-    last_layer = model.get_layer(last_layer)
-    return Model(inputs=model.input, outputs=last_layer.output)
+import importlib
 
 
-def subfun(model, last_layer):
-    """Get a submodel as a callable function."""
-    last_layer = model.get_layer(last_layer)
-    return K.function([model.layers[0].input], [last_layer.output])
-
-
-def get_conv_layers(model):
-    """Remove classification layer in the end of the CNN."""
-    flatten = [l.name for l in model.layers if l.name.startswith('flatten')]
-    #  return model
-    sub = submodel(model, flatten[-1])
-    # FIXME see keras#6462
-    sub._make_predict_function()
-    return sub
+def load_fun(name):
+    """Load a function from name."""
+    module, fun_name = name.rsplit('.', 1)
+    mod = importlib.import_module(module)
+    return getattr(mod, fun_name)
