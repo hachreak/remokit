@@ -106,9 +106,15 @@ def prepare_batch(config, filenames):
 
     get_labels = adapters.extract_labels()
 
+    if subconf.get('merge', 'flatten') == 'flatten':
+        todo = dataset.flatten
+    else:
+        import numpy as np
+        todo = lambda x: np.mean(x, axis=0)
+
     return dataset.merge_batches(
         batches_list, adapters=[
-            dataset.apply_to_x(dataset.foreach(dataset.flatten)),
+            dataset.apply_to_x(dataset.foreach(todo)),
             get_labels
         ]
     ), output_shape, get_labels
