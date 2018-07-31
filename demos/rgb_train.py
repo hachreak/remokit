@@ -23,12 +23,11 @@ from __future__ import absolute_import
 import sys
 import numpy as np
 from datetime import datetime
-from random import seed
 from remokit import dataset, adapters
 from remokit.datasets import get_filenames
 from remokit.datasets.kdef import get_data, get_label
 from remokit.train import run, compile_
-from remokit.utils import load_fun
+from remokit.utils import load_fun, set_reproducibility
 
 
 if len(sys.argv) < 9:
@@ -47,11 +46,11 @@ batch_size = int(sys.argv[6])
 epochs = int(sys.argv[7])
 model_file = sys.argv[8]
 get_model = load_fun(sys.argv[9])
-seed_value = sys.argv[10] if len(sys.argv) > 10 else datetime.now()
+seed_value = sys.argv[10] if len(sys.argv) > 10 else datetime.now().microsecond
 
 # Start training
 
-seed(seed_value)
+set_reproducibility(seed_value)
 
 num_classes = len(dataset._category)
 shape = img_x, img_y, 1

@@ -46,7 +46,6 @@ def run(model, batches, steps_per_epoch, epochs, history=None):
     model.fit_generator(
         generator=batches, max_queue_size=1, verbose=1,
         steps_per_epoch=steps_per_epoch, epochs=epochs,
-        callbacks=[history]
-
+        callbacks=[history], shuffle=False
     )
     return model

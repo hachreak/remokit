@@ -26,3 +26,32 @@ def load_fun(name):
     module, fun_name = name.rsplit('.', 1)
     mod = importlib.import_module(module)
     return getattr(mod, fun_name)
+
+
+def set_seed(myseed):
+    """Globally set seed."""
+    from random import seed
+    from numpy.random import seed as npseed
+    from tensorflow import set_random_seed as tfseed
+
+    seed(myseed)
+    npseed(int(myseed))
+    tfseed(int(myseed))
+
+
+def set_reproducibility(myseed):
+    """Set system as reproducible as much as possible.
+
+    See keras#2280
+    """
+    set_seed(myseed)
+
+    import os
+    import tensorflow as tf
+    os.environ['PYTHONHASHSEED'] = str(myseed)
+    session_conf = tf.ConfigProto(intra_op_parallelism_threads=1,
+                                  inter_op_parallelism_threads=1)
+
+    from keras import backend as K
+    sess = tf.Session(graph=tf.get_default_graph(), config=session_conf)
+    K.set_session(sess)

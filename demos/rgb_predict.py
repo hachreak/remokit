@@ -22,9 +22,9 @@ from __future__ import absolute_import
 
 import sys
 from datetime import datetime
-from random import seed
 from keras.models import load_model
 from remokit import dataset, adapters
+from remokit.utils import set_reproducibility
 from remokit.datasets import get_filenames
 from remokit.datasets.kdef import get_data, get_label
 from sklearn.metrics import classification_report, confusion_matrix, \
@@ -45,11 +45,11 @@ index = int(sys.argv[4])
 k = int(sys.argv[5])
 batch_size = int(sys.argv[6])
 model_file = sys.argv[7]
-seed_value = sys.argv[8] if len(sys.argv) > 8 else datetime.now()
+seed_value = sys.argv[8] if len(sys.argv) > 8 else datetime.now().microsecond
 
 # Start predict
 
-seed(seed_value)
+set_reproducibility(seed_value)
 
 shape = img_x, img_y, 1
 img_x, img_y, _ = shape

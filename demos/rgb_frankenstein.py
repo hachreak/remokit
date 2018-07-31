@@ -24,12 +24,11 @@ import os
 import json
 import sys
 import numpy as np
-from random import seed
 from copy import deepcopy
 from remokit import dataset, adapters
 from remokit.models import get_conv_layers, load_model as load_submodel
 from remokit.datasets import get_filenames
-from remokit.utils import load_fun
+from remokit.utils import load_fun, set_reproducibility
 from remokit.train import compile_, run
 from keras.models import load_model
 from sklearn.metrics import classification_report, confusion_matrix, \
@@ -145,7 +144,7 @@ config_file = sys.argv[1]
 with open(config_file) as data_file:
     config = json.load(data_file)
 
-seed(config['seed'])
+set_reproducibility(config['seed'])
 
 filenames = get_names(config, is_training=is_training)
 
