@@ -93,11 +93,8 @@ def prepare_batch(config, filenames):
         # input shape
         (_, img_x, img_y, _) = submodel.input_shape
 
-        get_labels = adapters.extract_labels()
-
         batches = dataset.stream_batch(stream, batch_size)
         batches = dataset.batch_adapt(batches, [
-            get_labels,
             adapters.rgb_to_bn,
             adapters.resize(img_x, img_y),
             adapters.matrix_to_bn,
@@ -107,8 +104,13 @@ def prepare_batch(config, filenames):
 
         batches_list.append(batches)
 
+    get_labels = adapters.extract_labels()
+
     return dataset.merge_batches(
-        batches_list, adapters=[dataset.flatten]
+        batches_list, adapters=[
+            dataset.apply_to_x(dataset.foreach(dataset.flatten)),
+            get_labels
+        ]
     ), output_shape, get_labels
 
 

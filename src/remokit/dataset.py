@@ -34,12 +34,17 @@ _category = {
 }
 
 
+def apply_adapters(batch, adapters):
+    """Apply adapters to the batch."""
+    for adapter in adapters:
+        batch = adapter(batch)
+    return batch
+
+
 def batch_adapt(batches, adapters):
     """Adapt a streaming batch."""
     for batch in batches:
-        for adapter in adapters:
-            batch = adapter(batch=batch)
-        yield batch
+        yield apply_adapters(batch, adapters)
 
 
 def categorical(stream):
@@ -153,6 +158,21 @@ def flatten(batch):
     return batch.flatten()
 
 
+def foreach(fun):
+    """Call for each."""
+    def f(list_):
+        result = []
+        for el in list_:
+            result.append(fun(el))
+        return result
+    return f
+
+
+def to_np_array(x):
+    """Transform in numpy array."""
+    return np.array(x)
+
+
 def merge_batches(batches_list, adapters):
     """Join multiple batches."""
     while True:
@@ -165,8 +185,9 @@ def merge_batches(batches_list, adapters):
             for i, singlex in enumerate(X):
                 X_list[i].append(singlex)
             y_list = y
-        X_list = list(batch_adapt(X_list, adapters=adapters))
-        yield np.array(X_list), np.array(y_list)
+        batch = (X_list, y_list)
+        adapters.append(apply_to_x(to_np_array))
+        yield apply_adapters(batch, adapters=adapters)
 
 
 def label2category(label):
