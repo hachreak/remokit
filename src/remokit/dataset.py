@@ -146,15 +146,14 @@ def apply_to_x(fun):
     return f
 
 
-def flatten(list_of_list):
+def flatten(batch):
     """Flatten a list of list."""
-    result = []
-    for l in list_of_list:
-        result.extend(l)
-    return result
+    if isinstance(batch, list):
+        batch = np.array(batch)
+    return batch.flatten()
 
 
-def merge_batches(batches_list):
+def merge_batches(batches_list, adapters):
     """Join multiple batches."""
     while True:
         X_list = None
@@ -164,8 +163,9 @@ def merge_batches(batches_list):
             if X_list is None:
                 X_list = [[] for _ in range(0, X.shape[0])]
             for i, singlex in enumerate(X):
-                X_list[i].extend(singlex.flatten())
+                X_list[i].append(singlex)
             y_list = y
+        X_list = list(batch_adapt(X_list, adapters=adapters))
         yield np.array(X_list), np.array(y_list)
 
 

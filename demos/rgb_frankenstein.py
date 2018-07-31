@@ -107,7 +107,9 @@ def prepare_batch(config, filenames):
 
         batches_list.append(batches)
 
-    return dataset.merge_batches(batches_list), output_shape, get_labels
+    return dataset.merge_batches(
+        batches_list, adapters=[dataset.flatten]
+    ), output_shape, get_labels
 
 
 # Load config
