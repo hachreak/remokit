@@ -33,6 +33,6 @@
         "epochs": 15
     },
     "seed": 0,
-    "merge": "mean",
+    "merge_strategy": "max",
     "result": "data/rgb_frankenstein.h5"
 }

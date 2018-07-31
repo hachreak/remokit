@@ -23,6 +23,7 @@ from __future__ import absolute_import
 import os
 import json
 import sys
+import numpy as np
 from random import seed
 from copy import deepcopy
 from remokit import dataset, adapters
@@ -66,6 +67,7 @@ def get_names(config, is_training=True):
 def prepare_batch(config, filenames):
     batch_size = config['train']['batch_size']
     epochs = config['train']['epochs']
+    merge_strategy = config.get('merge_strategy', 'flatten')
 
     batches_list = []
     output_shape = 0
@@ -89,7 +91,11 @@ def prepare_batch(config, filenames):
 
         # output shape
         (_, shape) = submodel.output_shape
-        output_shape += shape
+        if merge_strategy == 'flatten':
+            output_shape += shape
+        else:
+            output_shape = shape
+
         # input shape
         (_, img_x, img_y, _) = submodel.input_shape
 
@@ -106,11 +112,12 @@ def prepare_batch(config, filenames):
 
     get_labels = adapters.extract_labels()
 
-    if subconf.get('merge', 'flatten') == 'flatten':
+    if merge_strategy == 'flatten':
         todo = dataset.flatten
-    else:
-        import numpy as np
+    elif merge_strategy == 'mean':
         todo = lambda x: np.mean(x, axis=0)
+    else:
+        todo = lambda x: np.max(x, axis=0)
 
     return dataset.merge_batches(
         batches_list, adapters=[
