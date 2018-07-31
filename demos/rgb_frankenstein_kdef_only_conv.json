@@ -1,0 +1,30 @@
+{
+    "submodels": [
+        {
+            "model": "data/kdef_train_0_mouth.h5",
+            "directory": "data/KDEF-straight_cut/eyes-mouth/mouth",
+            "get_label": "remokit.datasets.kdef.get_label",
+            "get_data": "remokit.datasets.kdef.get_data",
+            "only_conv": true
+        },
+        {
+            "model": "data/kdef_train_0_eyes.h5",
+            "directory": "data/KDEF-straight_cut/eyes-mouth/eyes",
+            "get_label": "remokit.datasets.kdef.get_label",
+            "get_data": "remokit.datasets.kdef.get_data",
+            "only_conv": true
+        }
+    ],
+    "kfold": {
+        "index": 0,
+        "k": 10
+    },
+    "directory": "data/KDEF-straight_cut/eyes-mouth/eyes",
+    "model": "remokit.models.model02.get_model",
+    "train": {
+        "batch_size": 10,
+        "epochs": 7
+    },
+    "seed": 0,
+    "result": "data/rgb_frankenstein.h5"
+}

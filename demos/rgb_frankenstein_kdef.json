@@ -4,13 +4,15 @@
             "model": "data/kdef_train_0_mouth.h5",
             "directory": "data/KDEF-straight_cut/eyes-mouth/mouth",
             "get_label": "remokit.datasets.kdef.get_label",
-            "get_data": "remokit.datasets.kdef.get_data"
+            "get_data": "remokit.datasets.kdef.get_data",
+            "only_conv": false
         },
         {
             "model": "data/kdef_train_0_eyes.h5",
             "directory": "data/KDEF-straight_cut/eyes-mouth/eyes",
             "get_label": "remokit.datasets.kdef.get_label",
-            "get_data": "remokit.datasets.kdef.get_data"
+            "get_data": "remokit.datasets.kdef.get_data",
+            "only_conv": false
         }
     ],
     "kfold": {
@@ -21,7 +23,7 @@
     "model": "remokit.models.model02.get_model",
     "train": {
         "batch_size": 10,
-        "epochs": 7
+        "epochs": 5
     },
     "seed": 0,
     "result": "data/rgb_frankenstein.h5"

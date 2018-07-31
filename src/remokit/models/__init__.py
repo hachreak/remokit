@@ -18,7 +18,7 @@
 
 """Model utilities."""
 
-from keras.models import Model
+from keras.models import Model, load_model as _load_model
 from keras import backend as K
 
 
@@ -42,3 +42,11 @@ def get_conv_layers(model):
     # FIXME see keras#6462
     sub._make_predict_function()
     return sub
+
+
+def load_model(file_h5):
+    """Load model from file."""
+    model = _load_model(file_h5)
+    # FIXME see keras#6462
+    model._make_predict_function()
+    return model

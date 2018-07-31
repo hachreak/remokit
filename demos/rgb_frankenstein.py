@@ -26,7 +26,7 @@ import sys
 from random import seed
 from copy import deepcopy
 from remokit import dataset, adapters
-from remokit.models import get_conv_layers
+from remokit.models import get_conv_layers, load_model as load_submodel
 from remokit.datasets import get_filenames
 from remokit.utils import load_fun
 from remokit.train import compile_, run
@@ -69,12 +69,12 @@ def prepare_batch(config, filenames):
 
     batches_list = []
     output_shape = 0
-    for submodel in config['submodels']:
-        get_data = load_fun(submodel['get_data'])
+    for subconf in config['submodels']:
+        get_data = load_fun(subconf['get_data'])
 
         subtrain = deepcopy(filenames)
         subtrain = attach_basepath(
-            submodel['directory'], subtrain
+            subconf['directory'], subtrain
         )
 
         subtrain = dataset.epochs(subtrain, epochs=epochs)
@@ -82,14 +82,16 @@ def prepare_batch(config, filenames):
         stream = get_data(subtrain)
         stream = dataset.categorical(stream)
 
-        submodel = load_model(submodel['model'])
-        conv = get_conv_layers(submodel)
+        submodel = load_submodel(subconf['model'])
+
+        if subconf.get('only_conv', False):
+            submodel = get_conv_layers(submodel)
 
         # output shape
-        (_, shape) = conv.output_shape
+        (_, shape) = submodel.output_shape
         output_shape += shape
         # input shape
-        (_, img_x, img_y, _) = conv.input_shape
+        (_, img_x, img_y, _) = submodel.input_shape
 
         get_labels = adapters.extract_labels()
 
@@ -100,7 +102,7 @@ def prepare_batch(config, filenames):
             adapters.resize(img_x, img_y),
             adapters.matrix_to_bn,
             adapters.normalize,
-            dataset.apply_to_x(dataset.to_predict(conv)),
+            dataset.apply_to_x(dataset.to_predict(submodel)),
         ])
 
         batches_list.append(batches)
