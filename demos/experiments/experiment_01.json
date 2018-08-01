@@ -12,7 +12,7 @@
     },
     "directory": "data/KDEF-straight_cut/eyes-mouth/eyes",
     "model": "remokit.models.model01.get_model",
-    "batch_size": 10,
+    "batch_size": 28,
     "epochs": 15,
     "seed": 0,
     "result": "data/experiment_01.h5"

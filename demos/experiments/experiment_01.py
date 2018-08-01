@@ -34,12 +34,12 @@ from sklearn.metrics import classification_report, confusion_matrix, \
     accuracy_score
 
 
-def prepare_batch(filenames, config):
+def prepare_batch(filenames, config, epochs):
     """Prepare a batch."""
     shape = config['image_size']['img_x'], config['image_size']['img_y'], 1
     steps_per_epoch = len(filenames) // config['batch_size']
 
-    filenames = dataset.epochs(filenames, epochs=config['epochs'])
+    filenames = dataset.epochs(filenames, epochs=epochs)
 
     stream = load_fun(config['get_data'])(filenames)
     stream = dataset.categorical(stream)
@@ -60,10 +60,10 @@ def prepare_batch(filenames, config):
 
 def train(training, validating, config):
     batches, steps_per_epoch, shape, epochs, _ = prepare_batch(
-        training, config
+        training, config, config['epochs']
     )
     validation_data, validation_steps, _, _, _ = prepare_batch(
-        validating, config
+        validating, config, config['epochs']
     )
     # FIXME is always calling next() one time more
     validation_steps -= 1
@@ -79,7 +79,7 @@ def train(training, validating, config):
 
 def predict(testing, config):
     batches, steps_per_epoch, shape, epochs, get_labels = prepare_batch(
-        testing, config
+        testing, config, 1
     )
 
     model = load_model(config['result'])
