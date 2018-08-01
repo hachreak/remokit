@@ -67,6 +67,14 @@ def epochs(filenames, epochs=1):
             yield name
 
 
+def permute_index_kfold(k):
+    """Make permutation of testing/validation indices."""
+    for i in range(0, k):
+        test_index = i
+        validation_index = (i + 1) % k
+        yield test_index, validation_index
+
+
 def kfold_split(filenames, get_label, k=10, shuffle=True):
     """Split filenames in validation and training partitions."""
     per_category = files_per_category(filenames, get_label)
