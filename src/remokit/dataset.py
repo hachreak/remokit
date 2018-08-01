@@ -84,6 +84,8 @@ def kfold_split(filenames, get_label, k=10, shuffle=True):
 def get_tvt_sets(boxes, index_test, index_validation):
     """Split in test, validation, trainin sets."""
     test = boxes.pop(index_test)
+    if index_validation > index_test:
+        index_validation -= 1
     validation = boxes.pop(index_validation)
     training = list_flatten(boxes)
     return test, validation, training
