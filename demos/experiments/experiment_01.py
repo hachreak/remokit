@@ -16,7 +16,18 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with pysenslog.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Experiment 01."""
+"""Experiment 01.
+
+The input is a list of RGB images to process.
+
+Every batch of images will be submitted to the following pipeline:
+    - RGB to B/N matrix
+    - Resize images to a matrix width x height (see config.json file)
+    - Convert B/N matrix to B/N image (with 1 channel)
+    - Normalize values to [0, 1]
+
+Every batch of images will be training a CNN (see config.json file).
+"""
 
 from __future__ import absolute_import
 
@@ -68,6 +79,7 @@ def train(training, validating, config):
     # FIXME is always calling next() one time more
     validation_steps -= 1
 
+    num_classes = len(dataset._category)
     model = load_fun(config['model'])(shape, num_classes)
     model = compile_(model)
 
@@ -105,34 +117,25 @@ def predict(testing, config):
     print(accuracy_score(y_val, y_pred))
 
 
-if len(sys.argv) < 2:
-    msg = "Usage: {0} config.json [train|predict]"
-    print(msg.format(sys.argv[0]))
-    sys.exit(1)
+def experiment(config):
+    """Run experiment."""
+    # init randomness
+    set_reproducibility(config['seed'])
 
-# check if train or predict
-is_training = sys.argv[2] if len(sys.argv) > 2 else 'train'
-is_training = is_training == 'train'
+    testing, validating, training = get_tvt_filenames(
+        config['kfold']['test'], config['kfold']['validation'],
+        config['kfold']['k'], config['directory'],
+        load_fun(config['get_label']), config['batch_size']
+    )
+
+    if config['is_training']:
+        train(training, validating, config)
+    else:
+        predict(testing, config)
+
 
 # load config file
 config_file = sys.argv[1]
 with open(config_file) as data_file:
     config = json.load(data_file)
-
-# init randomness
-set_reproducibility(config['seed'])
-
-# config
-num_classes = len(dataset._category)
-
-testing, validating, training = get_tvt_filenames(
-    config['kfold']['test'], config['kfold']['validation'],
-    config['kfold']['k'], config['directory'],
-    load_fun(config['get_label']), config['batch_size']
-)
-
-
-if is_training:
-    train(training, validating, config)
-else:
-    predict(testing, config)
+    experiment(config)

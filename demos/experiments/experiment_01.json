@@ -15,5 +15,6 @@
     "batch_size": 28,
     "epochs": 15,
     "seed": 0,
-    "result": "data/experiment_01.h5"
+    "result": "data/experiment_01.h5",
+    "is_training": true
 }
