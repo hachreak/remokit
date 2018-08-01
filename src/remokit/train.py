@@ -40,12 +40,14 @@ def compile_(model):
     return model
 
 
-def run(model, batches, steps_per_epoch, epochs, history=None):
+def run(model, batches, steps_per_epoch, epochs, validation_data=None,
+        validation_steps=None, history=None):
     """Run training."""
     history = history or AccuracyHistory()
     model.fit_generator(
         generator=batches, max_queue_size=1, verbose=1,
         steps_per_epoch=steps_per_epoch, epochs=epochs,
-        callbacks=[history], shuffle=False
+        callbacks=[history], shuffle=False,
+        validation_data=validation_data, validation_steps=validation_steps
     )
     return model

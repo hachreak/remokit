@@ -22,15 +22,27 @@ from .. import dataset
 
 
 def get_filenames(index, k, directory, get_label, batch_size):
-    """Get a list of validating/training files splittes with kfold."""
+    """Get a list of test/training files splittes with kfold."""
     filenames = dataset.get_files(directory)
     filenames = list(filenames)
     random.shuffle(filenames)
 
-    v, t = dataset.kfold_split(
-        filenames, get_label=get_label, k=k, index=index
-    )
+    v, t = dataset.get_tt_sets(dataset.kfold_split(
+        filenames, get_label=get_label, k=k
+    ), index)
     return _fill(v, batch_size), _fill(t, batch_size)
+
+
+def get_tvt_filenames(index_t, index_v, k, directory, get_label, batch_size):
+    """Get a list of test/validating/training files splittes with kfold."""
+    filenames = dataset.get_files(directory)
+    filenames = list(filenames)
+    random.shuffle(filenames)
+
+    ts, v, tr = dataset.get_tvt_sets(dataset.kfold_split(
+        filenames, get_label=get_label, k=k
+    ), index_t, index_v)
+    return _fill(ts, batch_size), _fill(v, batch_size), _fill(tr, batch_size)
 
 
 def _fill(filenames, batch_size):

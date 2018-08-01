@@ -67,19 +67,33 @@ def epochs(filenames, epochs=1):
             yield name
 
 
-def kfold_split(filenames, get_label, k=10, index=0, shuffle=True):
+def kfold_split(filenames, get_label, k=10, shuffle=True):
     """Split filenames in validation and training partitions."""
     per_category = files_per_category(filenames, get_label)
-    validation = []
-    testing = []
+    boxes = [[] for _ in range(0, k)]
     for names in per_category.values():
         slices = np.array_split(names, k)
-        validation.extend(slices.pop(index))
-        for s in slices:
-            testing.extend(s)
+        for i, s in enumerate(slices):
+            boxes[i].extend(s)
     if shuffle:
-        np.random.shuffle(testing)
-    return validation, testing
+        for b in boxes:
+            np.random.shuffle(b)
+    return boxes
+
+
+def get_tvt_sets(boxes, index_test, index_validation):
+    """Split in test, validation, trainin sets."""
+    test = boxes.pop(index_test)
+    validation = boxes.pop(index_validation)
+    training = list_flatten(boxes)
+    return test, validation, training
+
+
+def get_tt_sets(boxes, index_test):
+    """Split in test, trainin sets."""
+    test = boxes.pop(index_test)
+    training = list_flatten(boxes)
+    return test, training
 
 
 def files_per_category(filenames, get_label):
@@ -149,6 +163,14 @@ def apply_to_x(fun):
         (Xblock, y) = batch
         return (fun(Xblock), y)
     return f
+
+
+def list_flatten(batch):
+    """Flatten a list."""
+    result = []
+    for b in batch:
+        result.extend(b)
+    return result
 
 
 def flatten(batch):
