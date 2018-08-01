@@ -25,6 +25,7 @@ def get_filenames(index, k, directory, get_label, batch_size):
     """Get a list of validating/training files splittes with kfold."""
     filenames = dataset.get_files(directory)
     filenames = list(filenames)
+    random.shuffle(filenames)
 
     v, t = dataset.kfold_split(
         filenames, get_label=get_label, k=k, index=index
