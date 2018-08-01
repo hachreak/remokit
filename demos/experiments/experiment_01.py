@@ -29,9 +29,9 @@ from remokit import dataset, adapters
 from remokit.datasets import get_tvt_filenames
 from remokit.utils import load_fun, set_reproducibility
 from remokit.train import compile_, run
-#  from keras.models import load_model
-#  from sklearn.metrics import classification_report, confusion_matrix, \
-#          accuracy_score
+from keras.models import load_model
+from sklearn.metrics import classification_report, confusion_matrix, \
+    accuracy_score
 
 
 def prepare_batch(filenames, config):
@@ -55,7 +55,54 @@ def prepare_batch(filenames, config):
         adapters.normalize
     ])
 
-    return batches, steps_per_epoch, shape, config['epochs']
+    return batches, steps_per_epoch, shape, config['epochs'], get_labels
+
+
+def train(training, validating, config):
+    batches, steps_per_epoch, shape, epochs, _ = prepare_batch(
+        training, config
+    )
+    validation_data, validation_steps, _, _, _ = prepare_batch(
+        validating, config
+    )
+    # FIXME is always calling next() one time more
+    validation_steps -= 1
+
+    model = load_fun(config['model'])(shape, num_classes)
+    model = compile_(model)
+
+    run(model, batches, steps_per_epoch, epochs,
+        validation_data=validation_data, validation_steps=validation_steps)
+
+    model.save(config['result'])
+
+
+def predict(testing, config):
+    batches, steps_per_epoch, shape, epochs, get_labels = prepare_batch(
+        testing, config
+    )
+
+    model = load_model(config['result'])
+
+    y_pred = model.predict_generator(batches, steps=steps_per_epoch)
+
+    y_val = dataset.list_apply(dataset.categorical2category, get_labels.labels)
+    y_pred = dataset.list_apply(dataset.categorical2category, y_pred)
+
+    ordered_labels = dataset.ordered_categories()
+
+    print('Confusion Matrix')
+
+    matrix = confusion_matrix(y_val, y_pred)
+    for i, row in enumerate(matrix):
+        to_print = ''.join(['{:4}'.format(item) for item in row])
+        print("{0:<15} {1}".format(ordered_labels[i], to_print))
+
+    report = classification_report(y_val, y_pred, target_names=ordered_labels)
+    print(report)
+
+    print("Accuracy")
+    print(accuracy_score(y_val, y_pred))
 
 
 if len(sys.argv) < 2:
@@ -78,25 +125,14 @@ set_reproducibility(config['seed'])
 # config
 num_classes = len(dataset._category)
 
-test, validating, training = get_tvt_filenames(
+testing, validating, training = get_tvt_filenames(
     config['kfold']['test'], config['kfold']['validation'],
     config['kfold']['k'], config['directory'],
     load_fun(config['get_label']), config['batch_size']
 )
 
+
 if is_training:
-    batches, steps_per_epoch, shape, epochs = prepare_batch(training, config)
-    validation_data, validation_steps, _, _ = prepare_batch(validating, config)
-    # FIXME is always calling next() one time more
-    validation_steps -= 1
-
-    model = load_fun(config['model'])(shape, num_classes)
-    model = compile_(model)
-
-    run(model, batches, steps_per_epoch, epochs,
-        validation_data=validation_data, validation_steps=validation_steps)
-
-    model.save(config['result'])
-
-import ipdb; ipdb.set_trace()
-print("ok")
+    train(training, validating, config)
+else:
+    predict(testing, config)
