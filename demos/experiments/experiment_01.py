@@ -87,6 +87,9 @@ test, validating, training = get_tvt_filenames(
 if is_training:
     batches, steps_per_epoch, shape, epochs = prepare_batch(training, config)
     validation_data, validation_steps, _, _ = prepare_batch(validating, config)
+    # FIXME is always calling next() one time more
+    validation_steps -= 1
+
     model = load_fun(config['model'])(shape, num_classes)
     model = compile_(model)
 
