@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with pysenslog.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Experiment 01.
+"""RGB CNN
 
 The input is a list of RGB images to process.
 
@@ -31,11 +31,6 @@ Every batch of images will be training a CNN (see config.json file).
 
 from __future__ import absolute_import
 
-#  import os
-import json
-import sys
-#  import numpy as np
-#  from copy import deepcopy
 from remokit import dataset, adapters
 from remokit.datasets import get_tvt_filenames
 from remokit.utils import load_fun, set_reproducibility
@@ -132,10 +127,3 @@ def experiment(config):
         train(training, validating, config)
     else:
         predict(testing, config)
-
-
-# load config file
-config_file = sys.argv[1]
-with open(config_file) as data_file:
-    config = json.load(data_file)
-    experiment(config)
