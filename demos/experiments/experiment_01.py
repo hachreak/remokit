@@ -77,7 +77,7 @@ def get_config():
 
 def save_metrics(metrics, config):
     # save metrics
-    with open(config['metrics'].format(config['seed']), 'w') as outfile:
+    with open(config['metrics'], 'w') as outfile:
         json.dump(metrics, outfile, cls=NumpyEncoder)
 
 

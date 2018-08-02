@@ -16,6 +16,6 @@
     "epochs": 15,
     "seed": 0,
     "repeat_seeds": 10,
-    "metrics": "data/eye_metrics_{0}.json",
+    "metrics": "data/eye_metrics.json",
     "verbose": 2
 }
