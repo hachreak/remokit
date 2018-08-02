@@ -52,9 +52,43 @@ def resize(img_x, img_y):
     """Resize images."""
     def f(batch):
         (x, y) = batch
-        x = np.array([dlib.resize_image(f, img_x, img_y) for f in x])
-        return x, y
+        images = []
+        for img in x:
+            # get proportional width x height
+            wx, wy = _better_proportion(
+                img_x, img_y, img.shape[0], img.shape[1]
+            )
+            # resize proportionally and add black padding
+            images.append(
+                padding(img_x, img_y, dlib.resize_image(img, wx, wy))
+            )
+        return np.array(images), y
     return f
+
+
+def _better_proportion(wx, wy, ix, iy):
+    y = _get_proportion(wx, ix, iy)
+    if y <= wy:
+        return wx, y
+    return _get_proportion(wy, iy, ix), wy
+
+
+def _get_proportion(wx, ix, iy):
+    return int(wx * iy / ix)
+
+
+def padding(img_x, img_y, img):
+    """Add padding."""
+    delta_rows = img_y - img.shape[1]
+    if delta_rows > 0:
+        pad_rows = np.zeros((img.shape[0], delta_rows))
+        img = np.hstack((img, pad_rows))
+        return img
+    else:
+        delta_cols = img_x - img.shape[0]
+        pad_cols = np.zeros((delta_cols, img.shape[1]))
+        img = np.vstack((img, pad_cols))
+        return img
 
 
 class extract_labels(object):
