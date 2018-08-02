@@ -45,28 +45,35 @@ def get_all(metrics):
             for k in report.keys()
         }
 
+    fmetrics = filter(lambda m: m['acc'] >= 0.20, metrics)
+
     return {
-        "acc": get_mmm(extract(lambda m: m['acc'], metrics)),
-        "loss": get_mmm(extract(lambda m: m['loss'], metrics)),
+        "count": {
+            "total": len(metrics),
+            "invalid": len(metrics) - len(fmetrics),
+            "valid": len(fmetrics)
+        },
+        "acc": get_mmm(extract(lambda m: m['acc'], fmetrics)),
+        "loss": get_mmm(extract(lambda m: m['loss'], fmetrics)),
         "report": {
             "average": {
                 "f1-score": get_mmm(extract(
-                    lambda m: m['report']['average']['f1-score'], metrics
+                    lambda m: m['report']['average']['f1-score'], fmetrics
                 )),
                 "precision": get_mmm(extract(
-                    lambda m: m['report']['average']['precision'], metrics
+                    lambda m: m['report']['average']['precision'], fmetrics
                 )),
                 "recall": get_mmm(extract(
-                    lambda m: m['report']['average']['recall'], metrics
+                    lambda m: m['report']['average']['recall'], fmetrics
                 )),
             },
             "classes": {
-                k: get_class_metrics(k, metrics)
-                for k in metrics[0]['report']['classes'].keys()
+                k: get_class_metrics(k, fmetrics)
+                for k in fmetrics[0]['report']['classes'].keys()
             }
         },
         "confusion_matrix": np.array([
-            m['confusion_matrix'] for m in metrics]
+            m['confusion_matrix'] for m in fmetrics]
         ).mean(axis=0)
     }
 
@@ -108,6 +115,10 @@ def show_prf(stats):
 
 def show(stats):
     """Show all stats."""
+    print("Total   : {0}".format(stats['count']['total']))
+    print("Valid   : {0}".format(stats['count']['valid']))
+    print("Invalid : {0}".format(stats['count']['invalid']))
+    print("")
     print("{0:14} {1:8}{2:9}{3:12}".format(" ", "min", "mean", "max"))
     show_mmm("Accuracy", "acc", stats)
     show_mmm("Loss    ", "loss", stats)
