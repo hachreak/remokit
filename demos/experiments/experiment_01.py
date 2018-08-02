@@ -20,36 +20,53 @@
 
 from __future__ import absolute_import
 
-from remokit.experiments.rgb_cnn import experiment
+import sys
+import json
+import numpy as np
+from copy import deepcopy
+from remokit.experiments.rgb_cnn import train, evaluate, predict
+from remokit.datasets import get_tvt_filenames
 from remokit.dataset import permute_index_kfold
+from remokit.utils import load_fun, set_reproducibility
 
 
-config = {
-    "get_label": "remokit.datasets.kdef.get_label",
-    "get_data": "remokit.datasets.kdef.get_data",
-    "kfold": {
-        "test": 0,
-        "validation": 1,
-        "k": 10
-    },
-    "image_size": {
-      "img_x": 100,
-      "img_y": 100
-    },
-    "directory": "data/KDEF-straight_cut/eyes-mouth/eyes",
-    "model": "remokit.models.model01.get_model",
-    "batch_size": 28,
-    "epochs": 15,
-    "seed": 0,
-    "result": "data/experiment_{0}_{1}.h5",
-    "is_training": True
-}
+class NumpyEncoder(json.JSONEncoder):
+
+    def default(self, obj):
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        return json.JSONEncoder.default(self, obj)
+
+
+config_file = sys.argv[1]
+with open(config_file) as data_file:
+    config = json.load(data_file)
 
 k = config['kfold']['k']
-result = config['result']
+metrics = []
 for test_index, validation_index in permute_index_kfold(k):
     config['kfold']['test'] = test_index
     config['kfold']['validation'] = validation_index
-    config['result'] = result.format(test_index, validation_index)
 
-    experiment(config)
+    set_reproducibility(config['seed'])
+
+    testing, validating, training = get_tvt_filenames(
+        config['kfold']['test'], config['kfold']['validation'],
+        config['kfold']['k'], config['directory'],
+        load_fun(config['get_label']), config['batch_size']
+    )
+
+    model = train(training, validating, config)
+
+    m = evaluate(testing, config, model=model)
+    m['kfold'] = deepcopy(config['kfold'])
+
+    matrix, report, accuracy = predict(testing, config, model=model)
+    m['confusion_matrix'] = matrix
+    m['report'] = report
+
+    metrics.append(m)
+
+# save metrics
+with open(config['metrics'].format(config['seed']), 'w') as outfile:
+    json.dump(metrics, outfile, cls=NumpyEncoder)

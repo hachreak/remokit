@@ -31,13 +31,13 @@ Every batch of images will be training a CNN (see config.json file).
 
 from __future__ import absolute_import
 
+import numpy as np
 from remokit import dataset, adapters
-from remokit.datasets import get_tvt_filenames
-from remokit.utils import load_fun, set_reproducibility
+from remokit.utils import load_fun
 from remokit.train import compile_, run
 from keras.models import load_model
 from sklearn.metrics import classification_report, confusion_matrix, \
-    accuracy_score
+    accuracy_score, precision_recall_fscore_support
 
 
 def prepare_batch(filenames, config, epochs):
@@ -81,15 +81,21 @@ def train(training, validating, config):
     run(model, batches, steps_per_epoch, epochs,
         validation_data=validation_data, validation_steps=validation_steps)
 
-    model.save(config['result'])
+    if 'result' in config:
+        model.save(config['result'])
+
+    return model
 
 
-def predict(testing, config):
+def predict(testing, config, **kwargs):
     batches, steps_per_epoch, shape, epochs, get_labels = prepare_batch(
         testing, config, 1
     )
 
-    model = load_model(config['result'])
+    if 'result' in config:
+        model = load_model(config['result'])
+    else:
+        model = kwargs['model']
 
     y_pred = model.predict_generator(batches, steps=steps_per_epoch)
 
@@ -108,22 +114,51 @@ def predict(testing, config):
     report = classification_report(y_val, y_pred, target_names=ordered_labels)
     print(report)
 
+    # get average metrics
+    (prec, recall, fscore, _) = precision_recall_fscore_support(
+        y_val, y_pred, average='weighted'
+    )
+    report = {
+        'average': {
+            'precision': prec,
+            'recall': recall,
+            'f1-score': fscore,
+        }
+    }
+    # get per class metrics
+    metrics = np.array(
+        precision_recall_fscore_support(y_val, y_pred)
+    ).transpose()
+    report['classes'] = {}
+    for i, m in enumerate(metrics):
+        report['classes'][dataset.category2label(i)] = {
+            'precision': m[0],
+            'recall': m[1],
+            'f1-score': m[2],
+            'support': m[3],
+        }
+
     print("Accuracy")
-    print(accuracy_score(y_val, y_pred))
+    accuracy = accuracy_score(y_val, y_pred)
+    print(accuracy)
+
+    return matrix, report, accuracy
 
 
-def experiment(config):
-    """Run experiment."""
-    # init randomness
-    set_reproducibility(config['seed'])
-
-    testing, validating, training = get_tvt_filenames(
-        config['kfold']['test'], config['kfold']['validation'],
-        config['kfold']['k'], config['directory'],
-        load_fun(config['get_label']), config['batch_size']
+def evaluate(testing, config, **kwargs):
+    """Evaluate."""
+    batches, steps_per_epoch, shape, epochs, get_labels = prepare_batch(
+        testing, config, 1
     )
 
-    if config['is_training']:
-        train(training, validating, config)
+    if 'result' in config:
+        model = load_model(config['result'])
     else:
-        predict(testing, config)
+        model = kwargs['model']
+
+    metrics = model.evaluate_generator(batches, steps=steps_per_epoch)
+
+    result = {}
+    for (i, j) in zip(model.metrics_names, metrics):
+        result[i] = j
+    return result
