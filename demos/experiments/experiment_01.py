@@ -43,6 +43,7 @@ def run_experiment(metrics, test_index, validation_index, config):
     config['kfold']['test'] = test_index
     config['kfold']['validation'] = validation_index
 
+    print("seed ".format(config['seed']))
     set_reproducibility(config['seed'])
 
     testing, validating, training = get_tvt_filenames(
