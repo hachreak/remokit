@@ -38,7 +38,7 @@ class NumpyEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, obj)
 
 
-def run_experiment(metrics, test_index, validation_index, config):
+def run_experiment(test_index, validation_index, config):
     """Run a single experiment."""
     config['kfold']['test'] = test_index
     config['kfold']['validation'] = validation_index
@@ -54,7 +54,9 @@ def run_experiment(metrics, test_index, validation_index, config):
 
     model = train(training, validating, config, verbose=config['verbose'])
 
+    # get metrics
     m = evaluate(testing, config, model=model)
+
     m['kfold'] = deepcopy(config['kfold'])
 
     matrix, report, accuracy = predict(testing, config, model=model)
@@ -63,11 +65,7 @@ def run_experiment(metrics, test_index, validation_index, config):
 
     m['seed'] = config['seed']
 
-    metrics.append(m)
-
-    # save metrics
-    with open(config['metrics'].format(config['seed']), 'w') as outfile:
-        json.dump(metrics, outfile, cls=NumpyEncoder)
+    return m
 
 
 def get_config():
@@ -77,13 +75,21 @@ def get_config():
     return config
 
 
+def save_metrics(metrics, config):
+    # save metrics
+    with open(config['metrics'].format(config['seed']), 'w') as outfile:
+        json.dump(metrics, outfile, cls=NumpyEncoder)
+
+
 def run_all(config):
     k = config['kfold']['k']
     metrics = []
     for myseed in range(0, config['repeat_seeds']):
         config['seed'] = myseed
         for test_index, validation_index in permute_index_kfold(k):
-            run_experiment(metrics, test_index, validation_index, config)
+            m = run_experiment(test_index, validation_index, config)
+            metrics.append(m)
+            save_metrics(metrics, config)
 
 
 run_all(get_config())
