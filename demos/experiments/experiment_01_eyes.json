@@ -15,6 +15,7 @@
     "batch_size": 28,
     "epochs": 15,
     "seed": 0,
+    "repeat_seeds": 10,
     "metrics": "data/eye_metrics_{0}.json",
     "verbose": 2
 }

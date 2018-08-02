@@ -38,13 +38,8 @@ class NumpyEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, obj)
 
 
-config_file = sys.argv[1]
-with open(config_file) as data_file:
-    config = json.load(data_file)
-
-k = config['kfold']['k']
-metrics = []
-for test_index, validation_index in permute_index_kfold(k):
+def run_experiment(metrics, test_index, validation_index, config):
+    """Run a single experiment."""
     config['kfold']['test'] = test_index
     config['kfold']['validation'] = validation_index
 
@@ -72,3 +67,22 @@ for test_index, validation_index in permute_index_kfold(k):
     # save metrics
     with open(config['metrics'].format(config['seed']), 'w') as outfile:
         json.dump(metrics, outfile, cls=NumpyEncoder)
+
+
+def get_config():
+    config_file = sys.argv[1]
+    with open(config_file) as data_file:
+        config = json.load(data_file)
+    return config
+
+
+def run_all(config):
+    k = config['kfold']['k']
+    metrics = []
+    for myseed in range(0, config['repeat_seeds']):
+        config['seed'] = myseed
+        for test_index, validation_index in permute_index_kfold(k):
+            run_experiment(metrics, test_index, validation_index, config)
+
+
+run_all(get_config())
