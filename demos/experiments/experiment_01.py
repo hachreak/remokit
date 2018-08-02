@@ -67,6 +67,6 @@ for test_index, validation_index in permute_index_kfold(k):
 
     metrics.append(m)
 
-# save metrics
-with open(config['metrics'].format(config['seed']), 'w') as outfile:
-    json.dump(metrics, outfile, cls=NumpyEncoder)
+    # save metrics
+    with open(config['metrics'].format(config['seed']), 'w') as outfile:
+        json.dump(metrics, outfile, cls=NumpyEncoder)
