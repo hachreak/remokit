@@ -65,6 +65,8 @@ for test_index, validation_index in permute_index_kfold(k):
     m['confusion_matrix'] = matrix
     m['report'] = report
 
+    m['seed'] = config['seed']
+
     metrics.append(m)
 
     # save metrics
