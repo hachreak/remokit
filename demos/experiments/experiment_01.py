@@ -56,7 +56,7 @@ for test_index, validation_index in permute_index_kfold(k):
         load_fun(config['get_label']), config['batch_size']
     )
 
-    model = train(training, validating, config)
+    model = train(training, validating, config, verbose=config['verbose'])
 
     m = evaluate(testing, config, model=model)
     m['kfold'] = deepcopy(config['kfold'])

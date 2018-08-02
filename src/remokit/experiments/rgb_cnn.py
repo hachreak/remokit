@@ -64,7 +64,7 @@ def prepare_batch(filenames, config, epochs):
     return batches, steps_per_epoch, shape, config['epochs'], get_labels
 
 
-def train(training, validating, config):
+def train(training, validating, config, **kwargs):
     batches, steps_per_epoch, shape, epochs, _ = prepare_batch(
         training, config, config['epochs']
     )
@@ -78,8 +78,11 @@ def train(training, validating, config):
     model = load_fun(config['model'])(shape, num_classes)
     model = compile_(model)
 
-    run(model, batches, steps_per_epoch, epochs,
-        validation_data=validation_data, validation_steps=validation_steps)
+    run(
+        model, batches, steps_per_epoch, epochs,
+        validation_data=validation_data, validation_steps=validation_steps,
+        **kwargs
+    )
 
     if 'result' in config:
         model.save(config['result'])
