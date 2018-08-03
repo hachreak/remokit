@@ -20,22 +20,13 @@
 
 from keras.losses import categorical_crossentropy
 from keras.optimizers import Adam
-from keras.callbacks import Callback
-
-
-class AccuracyHistory(Callback):
-
-    def on_train_begin(self, logs={}):
-        self.acc = []
-
-    def on_epoch_end(self, batch, logs={}):
-        self.acc.append(logs.get('acc'))
+from keras.callbacks import EarlyStopping, ReduceLROnPlateau
 
 
 def compile_(model):
     """Compile model before train."""
     # compile model
-    model.compile(loss=categorical_crossentropy, optimizer=Adam(),
+    model.compile(loss=categorical_crossentropy, optimizer=Adam(lr=0.01),
                   metrics=['accuracy'])
     return model
 
@@ -43,11 +34,15 @@ def compile_(model):
 def run(model, batches, steps_per_epoch, epochs, validation_data=None,
         validation_steps=None, history=None, **kwargs):
     """Run training."""
-    history = history or AccuracyHistory()
+    early_stop = EarlyStopping(monitor='val_loss', min_delta=0, patience=7,
+                               verbose=1, mode='auto')
+    reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.5,
+                                  verbose=1, patience=3, min_lr=0.001)
+
     model.fit_generator(
         generator=batches, max_queue_size=1,
         steps_per_epoch=steps_per_epoch, epochs=epochs,
-        callbacks=[history], shuffle=False,
+        callbacks=[reduce_lr, early_stop], shuffle=True,
         validation_data=validation_data, validation_steps=validation_steps,
         **kwargs
     )
