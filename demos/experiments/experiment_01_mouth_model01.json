@@ -10,12 +10,12 @@
       "img_x": 100,
       "img_y": 100
     },
-    "directory": "data/KDEF-straight/",
-    "model": "remokit.models.model04.get_model",
+    "directory": "data/KDEF-straight_cut/eyes-mouth/mouth",
+    "model": "remokit.models.model01.get_model",
     "batch_size": 14,
     "epochs": 45,
     "seed": 0,
     "repeat_seeds": 10,
-    "metrics": "data/face_metrics_model4.json",
+    "metrics": "data/mouth_metrics_model01.json",
     "verbose": 2
 }
