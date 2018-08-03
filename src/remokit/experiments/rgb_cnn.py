@@ -54,14 +54,24 @@ def prepare_batch(filenames, config, epochs):
     get_labels = adapters.extract_labels()
 
     batches = dataset.stream_batch(stream, config['batch_size'])
-    batches = dataset.batch_adapt(batches, [
+
+    adapters_list = [
         get_labels,
         adapters.rgb_to_bn,
         adapters.resize(**config['image_size']),
-        adapters.matrix_to_bn,
-        adapters.apply_distortion(ImageDataGenerator(**config['distortions'])),
-        adapters.normalize
-    ])
+        adapters.matrix_to_bn
+    ]
+
+    if 'distortions' in config:
+        adapters_list.append(
+            adapters.apply_distortion(
+                ImageDataGenerator(**config['distortions'])
+            )
+        )
+
+    adapters_list.append(adapters.normalize)
+
+    batches = dataset.batch_adapt(batches, adapters_list)
 
     return batches, steps_per_epoch, shape, config['epochs'], get_labels
 
