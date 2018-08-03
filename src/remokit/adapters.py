@@ -101,3 +101,16 @@ class extract_labels(object):
         (x, y) = batch
         self.labels.extend(y)
         return batch
+
+
+def apply_distortion(datagen):
+    """Apply a random distortion to the input."""
+    def f(batch):
+        (x, y) = batch
+        x = np.array([
+            datagen.apply_transform(
+                img, datagen.get_random_transform(img.shape)
+            ) for img in x
+        ])
+        return x, y
+    return f

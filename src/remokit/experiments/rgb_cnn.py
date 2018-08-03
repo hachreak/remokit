@@ -36,6 +36,7 @@ from remokit import dataset, adapters
 from remokit.utils import load_fun
 from remokit.train import compile_, run
 from keras.models import load_model
+from keras.preprocessing.image import ImageDataGenerator
 from sklearn.metrics import classification_report, confusion_matrix, \
     accuracy_score, precision_recall_fscore_support
 
@@ -58,6 +59,7 @@ def prepare_batch(filenames, config, epochs):
         adapters.rgb_to_bn,
         adapters.resize(**config['image_size']),
         adapters.matrix_to_bn,
+        adapters.apply_distortion(ImageDataGenerator(**config['distortions'])),
         adapters.normalize
     ])
 

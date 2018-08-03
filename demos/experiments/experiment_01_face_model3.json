@@ -17,5 +17,13 @@
     "seed": 0,
     "repeat_seeds": 10,
     "metrics": "data/face_metrics_model03.json",
-    "verbose": 2
+    "verbose": 2,
+    "distortions": {
+      "featurewise_center": true,
+      "featurewise_std_normalization": true,
+      "rotation_range": 20,
+      "width_shift_range": 0.2,
+      "height_shift_range": 0.2,
+      "horizontal_flip": true
+    }
 }

@@ -16,7 +16,10 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with pysenslog.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Experiment 01."""
+"""Experiment 01.
+
+RGB images as input of a CNN with a classifier for the emotions.
+"""
 
 from __future__ import absolute_import
 
