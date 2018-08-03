@@ -1,0 +1,21 @@
+{
+    "get_label": "remokit.datasets.kdef.get_label",
+    "get_data": "remokit.datasets.kdef.get_data",
+    "kfold": {
+        "test": 0,
+        "validation": 1,
+        "k": 10
+    },
+    "image_size": {
+      "img_x": 100,
+      "img_y": 100
+    },
+    "directory": "data/KDEF-straight_cut/eyes-mouth/mouth",
+    "model": "remokit.models.model04.get_model",
+    "batch_size": 14,
+    "epochs": 45,
+    "seed": 0,
+    "repeat_seeds": 10,
+    "metrics": "data/mouth_metrics_model4.json",
+    "verbose": 2
+}
