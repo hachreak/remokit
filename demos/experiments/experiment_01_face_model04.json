@@ -13,7 +13,7 @@
     "directory": "data/KDEF-straight/",
     "model": "remokit.models.model04.get_model",
     "batch_size": 14,
-    "epochs": 45,
+    "epochs": 70,
     "seed": 0,
     "repeat_seeds": 10,
     "metrics": "data/face_metrics_model04.json",
