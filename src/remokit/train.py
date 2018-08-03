@@ -26,7 +26,7 @@ from keras.callbacks import EarlyStopping, ReduceLROnPlateau
 def compile_(model):
     """Compile model before train."""
     # compile model
-    model.compile(loss=categorical_crossentropy, optimizer=Adam(lr=0.01),
+    model.compile(loss=categorical_crossentropy, optimizer=Adam(lr=0.001),
                   metrics=['accuracy'])
     return model
 
@@ -37,7 +37,7 @@ def run(model, batches, steps_per_epoch, epochs, validation_data=None,
     early_stop = EarlyStopping(monitor='val_loss', min_delta=0, patience=7,
                                verbose=1, mode='auto')
     reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.5,
-                                  verbose=1, patience=3, min_lr=0.001)
+                                  verbose=1, patience=3, min_lr=0.0001)
 
     model.fit_generator(
         generator=batches, max_queue_size=1,
