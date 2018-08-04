@@ -20,6 +20,7 @@
 
 import os
 import importlib
+import json
 
 
 def load_fun(name):
@@ -59,3 +60,10 @@ def clean_session():
     """Clean tensorflow session at the end."""
     from keras import backend as K
     K.clear_session()
+
+
+def load_config(filename):
+    """Load configuration from file."""
+    with open(filename) as data_file:
+        config = json.load(data_file)
+    return config

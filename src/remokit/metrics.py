@@ -128,3 +128,17 @@ def show(stats):
     print("")
     show_prf(stats)
     print("")
+
+
+class NumpyEncoder(json.JSONEncoder):
+
+    def default(self, obj):
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        return json.JSONEncoder.default(self, obj)
+
+
+def save_metrics(metrics, filename):
+    # save metrics
+    with open(filename, 'w') as outfile:
+        json.dump(metrics, outfile, cls=NumpyEncoder)

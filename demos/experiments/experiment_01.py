@@ -24,22 +24,13 @@ RGB images as input of a CNN with a classifier for the emotions.
 from __future__ import absolute_import
 
 import sys
-import json
-import numpy as np
 from copy import deepcopy
 from remokit.experiments import train, evaluate, predict
 from remokit.experiments.rgb_cnn import prepare_batch
 from remokit.datasets import get_tvt_filenames
 from remokit.dataset import permute_index_kfold
-from remokit.utils import load_fun, set_seed, clean_session
-
-
-class NumpyEncoder(json.JSONEncoder):
-
-    def default(self, obj):
-        if isinstance(obj, np.ndarray):
-            return obj.tolist()
-        return json.JSONEncoder.default(self, obj)
+from remokit.utils import load_fun, set_seed, clean_session, load_config
+from remokit.metrics import save_metrics
 
 
 def run_experiment(test_index, validation_index, config):
@@ -76,19 +67,6 @@ def run_experiment(test_index, validation_index, config):
     return m
 
 
-def get_config():
-    config_file = sys.argv[1]
-    with open(config_file) as data_file:
-        config = json.load(data_file)
-    return config
-
-
-def save_metrics(metrics, config):
-    # save metrics
-    with open(config['metrics'], 'w') as outfile:
-        json.dump(metrics, outfile, cls=NumpyEncoder)
-
-
 def run_all(config):
     k = config['kfold']['k']
     metrics = []
@@ -97,8 +75,8 @@ def run_all(config):
         for test_index, validation_index in permute_index_kfold(k):
             m = run_experiment(test_index, validation_index, config)
             metrics.append(m)
-            save_metrics(metrics, config)
+            save_metrics(metrics, config['metrics'])
             clean_session()
 
 
-run_all(get_config())
+run_all(load_config(sys.argv[1]))
