@@ -1,0 +1,18 @@
+{
+    "shape_predictor": "data/shape_predictor_68_face_landmarks.dat",
+    "prepare_batch": "remokit.experiments.rgb_features_cnn.prepare_batch",
+    "get_label": "remokit.datasets.kdef.get_label",
+    "get_data": "remokit.datasets.kdef.get_data",
+    "kfolds": 10,
+    "image_size": {
+      "img_x": 100,
+      "img_y": 100
+    },
+    "directory": "data/KDEF-straight/",
+    "model": "remokit.models.model02.get_model",
+    "batch_size": 14,
+    "epochs": 70,
+    "repeat_seeds": 10,
+    "metrics": "data/metrics_exp02.json",
+    "verbose": 2
+}
