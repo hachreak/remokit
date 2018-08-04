@@ -27,7 +27,8 @@ import sys
 import json
 import numpy as np
 from copy import deepcopy
-from remokit.experiments.rgb_cnn import train, evaluate, predict
+from remokit.experiments import train, evaluate, predict
+from remokit.experiments.rgb_cnn import prepare_batch
 from remokit.datasets import get_tvt_filenames
 from remokit.dataset import permute_index_kfold
 from remokit.utils import load_fun, set_seed, clean_session
@@ -55,14 +56,18 @@ def run_experiment(test_index, validation_index, config):
         load_fun(config['get_label']), config['batch_size']
     )
 
-    model = train(training, validating, config, verbose=config['verbose'])
+    model = train(
+        training, validating, config, prepare_batch, verbose=config['verbose']
+    )
 
     # get metrics
-    m = evaluate(testing, config, model=model)
+    m = evaluate(testing, config, prepare_batch, model=model)
 
     m['kfold'] = deepcopy(config['kfold'])
 
-    matrix, report, accuracy = predict(testing, config, model=model)
+    matrix, report, accuracy = predict(
+        testing, config, prepare_batch, model=model
+    )
     m['confusion_matrix'] = matrix
     m['report'] = report
 
