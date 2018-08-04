@@ -1,11 +1,7 @@
 {
     "get_label": "remokit.datasets.kdef.get_label",
     "get_data": "remokit.datasets.kdef.get_data",
-    "kfold": {
-        "test": 0,
-        "validation": 1,
-        "k": 10
-    },
+    "kfolds": 10,
     "image_size": {
       "img_x": 100,
       "img_y": 100
@@ -14,7 +10,6 @@
     "model": "remokit.models.model05.get_model",
     "batch_size": 7,
     "epochs": 70,
-    "seed": 0,
     "repeat_seeds": 10,
     "metrics": "data/eye_metrics_model05.json",
     "verbose": 2

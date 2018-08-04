@@ -24,7 +24,6 @@ RGB images as input of a CNN with a classifier for the emotions.
 from __future__ import absolute_import
 
 import sys
-from copy import deepcopy
 from remokit.experiments import train, evaluate, predict
 from remokit.experiments.rgb_cnn import prepare_batch
 from remokit.datasets import get_tvt_filenames
@@ -35,15 +34,12 @@ from remokit.metrics import save_metrics
 
 def run_experiment(test_index, validation_index, config):
     """Run a single experiment."""
-    config['kfold']['test'] = test_index
-    config['kfold']['validation'] = validation_index
-
     print("seed {0}".format(config['seed']))
     set_seed(config['seed'])
 
     testing, validating, training = get_tvt_filenames(
-        config['kfold']['test'], config['kfold']['validation'],
-        config['kfold']['k'], config['directory'],
+        test_index, validation_index,
+        config['kfolds'], config['directory'],
         load_fun(config['get_label']), config['batch_size']
     )
 
@@ -54,7 +50,11 @@ def run_experiment(test_index, validation_index, config):
     # get metrics
     m = evaluate(testing, config, prepare_batch, model=model)
 
-    m['kfold'] = deepcopy(config['kfold'])
+    m['kfolds'] = {
+        'k': config['kfolds'],
+        'testing': test_index,
+        'validation': validation_index
+    }
 
     matrix, report, accuracy = predict(
         testing, config, prepare_batch, model=model
@@ -68,7 +68,7 @@ def run_experiment(test_index, validation_index, config):
 
 
 def run_all(config):
-    k = config['kfold']['k']
+    k = config['kfolds']
     metrics = []
     for myseed in range(0, config['repeat_seeds']):
         config['seed'] = myseed
