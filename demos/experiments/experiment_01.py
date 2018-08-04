@@ -30,7 +30,7 @@ from copy import deepcopy
 from remokit.experiments.rgb_cnn import train, evaluate, predict
 from remokit.datasets import get_tvt_filenames
 from remokit.dataset import permute_index_kfold
-from remokit.utils import load_fun, set_reproducibility, set_seed
+from remokit.utils import load_fun, set_seed, clean_session
 
 
 class NumpyEncoder(json.JSONEncoder):
@@ -85,7 +85,6 @@ def save_metrics(metrics, config):
 
 
 def run_all(config):
-    set_reproducibility()
     k = config['kfold']['k']
     metrics = []
     for myseed in range(0, config['repeat_seeds']):
@@ -94,6 +93,7 @@ def run_all(config):
             m = run_experiment(test_index, validation_index, config)
             metrics.append(m)
             save_metrics(metrics, config)
+            clean_session()
 
 
 run_all(get_config())

@@ -53,3 +53,9 @@ def set_reproducibility():
     from keras import backend as K
     sess = tf.Session(graph=tf.get_default_graph(), config=session_conf)
     K.set_session(sess)
+
+
+def clean_session():
+    """Clean tensorflow session at the end."""
+    from keras import backend as K
+    K.clear_session()
