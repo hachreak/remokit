@@ -25,7 +25,6 @@ from __future__ import absolute_import
 
 import sys
 from remokit.experiments import train, evaluate, predict
-from remokit.experiments.rgb_cnn import prepare_batch
 from remokit.datasets import get_tvt_filenames
 from remokit.dataset import permute_index_kfold
 from remokit.utils import load_fun, set_seed, clean_session, load_config
@@ -35,18 +34,24 @@ from remokit.metrics import save_metrics
 def run_experiment(test_index, validation_index, config):
     """Run a single experiment."""
     print("seed {0}".format(config['seed']))
+    print("kfold: test [{0}]  validation [{1}]".format(
+        test_index, validation_index
+    ))
+
     set_seed(config['seed'])
 
+    prepare_batch = load_fun(config['prepare_batch'])
+
+    # split filenames in groups
     testing, validating, training = get_tvt_filenames(
         test_index, validation_index,
         config['kfolds'], config['directory'],
         load_fun(config['get_label']), config['batch_size']
     )
-
+    # run training
     model = train(
         training, validating, config, prepare_batch, verbose=config['verbose']
     )
-
     # get metrics
     m = evaluate(testing, config, prepare_batch, model=model)
 
@@ -56,9 +61,11 @@ def run_experiment(test_index, validation_index, config):
         'validation': validation_index
     }
 
+    # get more metrics running predict
     matrix, report, accuracy = predict(
         testing, config, prepare_batch, model=model
     )
+
     m['confusion_matrix'] = matrix
     m['report'] = report
 

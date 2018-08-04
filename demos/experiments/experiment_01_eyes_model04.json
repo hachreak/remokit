@@ -1,4 +1,5 @@
 {
+    "prepare_batch": "remokit.experiments.rgb_cnn.prepare_batch",
     "get_label": "remokit.datasets.kdef.get_label",
     "get_data": "remokit.datasets.kdef.get_data",
     "kfolds": 10,
