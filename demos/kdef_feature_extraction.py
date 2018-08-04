@@ -18,7 +18,7 @@
 
 """Demo of feature extraction."""
 
-from remokit import dataset
+from remokit import dataset, adapters
 from remokit.datasets.kdef import get_data
 from remokit.preprocessing import features
 import dlib
@@ -28,14 +28,28 @@ shape_predictor = "data/shape_predictor_68_face_landmarks.dat"
 img_x, img_y = 100, 100
 
 filenames = dataset.get_files(directory)
-#  filenames = dataset.first(filenames, 21)
 filenames = list(filenames)
 
 stream = get_data(filenames)
-stream = dataset.categorical(stream)
-stream = features.extract(shape_predictor, (img_x, img_y))(stream)
 
-label, img = next(stream)
+batches = dataset.stream_batch(stream, 1)
+
+batches = dataset.batch_adapt(batches, [
+    dataset.apply_to_y(dataset.foreach(dataset.categorical)),
+    dataset.apply_to_x(dataset.foreach(
+        adapters.resize(100, 100)
+    )),
+    dataset.apply_to_x(dataset.foreach(adapters.astype('uint8'))),
+    dataset.apply_to_x(dataset.foreach(
+        features.extract(shape_predictor)
+    )),
+    dataset.apply_to_x(dataset.foreach(features.expand2image(100, 100)))
+
+])
+
+x, y = next(batches)
+
+img = x[0]
 
 win = dlib.image_window()
 win.set_image(img)

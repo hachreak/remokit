@@ -23,46 +23,40 @@ import numpy as np
 import dlib
 
 
-def rgb_to_bn(batch):
+def rgb_to_bn(matrix):
     """Adapt rgb image to input for the CNN as b/n image."""
-    (x, y) = batch
-    x = np.array(
-        [cv2.cvtColor(f, cv2.COLOR_RGB2GRAY) for f in x]
-    )
-    return x, y
+    return cv2.cvtColor(matrix, cv2.COLOR_RGB2GRAY)
 
 
-def matrix_to_bn(batch):
+def matrix_to_bn(batch_x):
     """Adapt matrix to input for the CNN as b/n image."""
-    (x, y) = batch
-    (img_x, img_y) = x[0].shape
-    x = x.reshape(x.shape[0], img_x, img_y, 1)
-    return x, y
+    (img_x, img_y) = batch_x[0].shape
+    return batch_x.reshape(batch_x.shape[0], img_x, img_y, 1)
 
 
-def normalize(batch):
-    """Normalize batch."""
-    (x, y) = batch
-    x = x.astype('float32')
-    x /= 255
-    return x, y
+def astype(name):
+    """Convert matrix to this new type."""
+    def f(matrix):
+        return matrix.astype(name)
+    return f
+
+
+def normalize(max_):
+    """Normalize matrix."""
+    def f(matrix):
+        matrix = matrix.astype('float32')
+        matrix /= max_
+        return matrix
+    return f
 
 
 def resize(img_x, img_y):
-    """Resize images."""
-    def f(batch):
-        (x, y) = batch
-        images = []
-        for img in x:
-            # get proportional width x height
-            wx, wy = _better_proportion(
-                img_x, img_y, img.shape[0], img.shape[1]
-            )
-            # resize proportionally and add black padding
-            images.append(
-                padding(img_x, img_y, dlib.resize_image(img, wx, wy))
-            )
-        return np.array(images), y
+    """Resize image."""
+    def f(img):
+        # get proportional width x height
+        wx, wy = _better_proportion(img_x, img_y, img.shape[0], img.shape[1])
+        # resize proportionally and add black padding
+        return padding(img_x, img_y, dlib.resize_image(img, wx, wy))
     return f
 
 
@@ -79,14 +73,17 @@ def _get_proportion(wx, ix, iy):
 
 def padding(img_x, img_y, img):
     """Add padding."""
+    shape = list(img.shape)
     delta_rows = img_y - img.shape[1]
     if delta_rows > 0:
-        pad_rows = np.zeros((img.shape[0], delta_rows))
+        shape[1] = delta_rows
+        pad_rows = np.zeros(shape)
         img = np.hstack((img, pad_rows))
         return img
     else:
         delta_cols = img_x - img.shape[0]
-        pad_cols = np.zeros((delta_cols, img.shape[1]))
+        shape[0] = delta_cols
+        pad_cols = np.zeros(shape)
         img = np.vstack((img, pad_cols))
         return img
 

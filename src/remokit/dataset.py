@@ -47,11 +47,9 @@ def batch_adapt(batches, adapters):
         yield apply_adapters(batch, adapters)
 
 
-def categorical(stream):
+def categorical(label):
     """Convert label to categorical."""
-    for img, label in stream:
-        cat = to_categorical(label2category(label), len(_category))
-        yield img, cat
+    return to_categorical(label2category(label), len(_category))
 
 
 def ordered_categories():
@@ -175,6 +173,14 @@ def apply_to_x(fun):
     return f
 
 
+def apply_to_y(fun):
+    """Apply function to y."""
+    def f(batch):
+        (X, y) = batch
+        return (X, fun(y))
+    return f
+
+
 def list_flatten(batch):
     """Flatten a list."""
     result = []
@@ -196,7 +202,7 @@ def foreach(fun):
         result = []
         for el in list_:
             result.append(fun(el))
-        return result
+        return np.array(result)
     return f
 
 

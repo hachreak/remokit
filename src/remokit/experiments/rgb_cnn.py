@@ -44,17 +44,19 @@ def prepare_batch(filenames, config, epochs):
     filenames = dataset.epochs(filenames, epochs=epochs)
 
     stream = load_fun(config['get_data'])(filenames)
-    stream = dataset.categorical(stream)
 
     get_labels = adapters.extract_labels()
 
     batches = dataset.stream_batch(stream, config['batch_size'])
 
     adapters_list = [
+        dataset.apply_to_y(dataset.foreach(dataset.categorical)),
         get_labels,
-        adapters.rgb_to_bn,
-        adapters.resize(**config['image_size']),
-        adapters.matrix_to_bn
+        dataset.apply_to_x(dataset.foreach(adapters.rgb_to_bn)),
+        dataset.apply_to_x(dataset.foreach(
+            adapters.resize(**config['image_size'])
+        )),
+        dataset.apply_to_x(adapters.matrix_to_bn)
     ]
 
     if 'distortions' in config:
@@ -64,7 +66,7 @@ def prepare_batch(filenames, config, epochs):
             )
         )
 
-    adapters_list.append(adapters.normalize)
+    adapters_list.append(dataset.apply_to_x(adapters.normalize(255))),
 
     batches = dataset.batch_adapt(batches, adapters_list)
 
