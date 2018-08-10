@@ -21,6 +21,11 @@ import random
 from .. import dataset
 
 
+class ExpressionNotFound(Exception):
+    """Expression not found."""
+    pass
+
+
 def get_filenames(index, k, directory, get_label, batch_size):
     """Get a list of test/training files splittes with kfold."""
     filenames = dataset.get_files(directory)
