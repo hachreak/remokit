@@ -3,8 +3,8 @@
     "get_label": "remokit.datasets.kdef.get_label",
     "kfolds": 10,
     "image_size": {
-      "img_x": 100,
-      "img_y": 100
+      "img_x": 200,
+      "img_y": 200
     },
     "model": "remokit.models.model03.get_model",
     "batch_size": 14,
@@ -12,7 +12,7 @@
     "repeat_seeds": 10,
     "metrics": "data/mouth_metrics_model03.json",
     "verbose": 2,
-    "directory": "/tmp/models/",
+    "directory": "data/stage/",
     "get_label": "remokit.experiments.extract_face.get_label",
     "preprocess": [
       {
