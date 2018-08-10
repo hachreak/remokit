@@ -20,35 +20,37 @@
 
 import os
 import dlib
-from remokit import dataset as ds, adapters, datasets
+from remokit import dataset as ds, adapters, utils
 from remokit.preprocessing import features
 
 
-def prepare_batch(directory, dataset, config):
+def prepare_batch(config):
     """Extract faces from the dataset."""
-    stream = dataset.get_files(directory)
+    stream = utils.load_fun(config['get_files'])(config['directory'])
 
     stream = ds.stream(ds.apply_to_x(adapters.astype('uint8')), stream)
     stream = ds.stream(ds.apply_to_x(features.get_face()), stream)
     stream = ds.stream(
-        ds.apply_to_x(adapters.resize(**config['big_image_size'])), stream
+        ds.apply_to_x(adapters.resize(**config['image_size'])), stream
     )
 
     return stream
 
 
-def save(batches, config):
+def save(batches, config, init=None):
     """Save preprocessed images."""
-    indices = {v: 0 for v in ds._category.keys()}
+    if init is None:
+        indices = {v: 0 for v in ds._category.keys()}
     index = 0
     for (X, y) in batches:
         if y == 'neutral':
             index += 1
         indices[y] += 1
-        filename = '{0}_{1}_{2}.jpg'.format(y, index, indices[y])
+        filename = '{0:08}_{1}_{2}.jpg'.format(index, y, indices[y])
         destination = os.path.join(config['destination'], filename)
         dlib.save_image(X.astype('uint8'), destination)
         print(destination)
+    return indices
 
 
 def get_label(filename):
