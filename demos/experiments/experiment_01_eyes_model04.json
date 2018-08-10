@@ -1,16 +1,24 @@
 {
     "prepare_batch": "remokit.experiments.rgb_cnn.prepare_batch",
-    "get_label": "remokit.datasets.kdef.get_label",
     "kfolds": 10,
     "image_size": {
       "img_x": 100,
       "img_y": 100
     },
-    "directory": "data/KDEF-straight_cut/eyes-mouth/eyes",
     "model": "remokit.models.model04.get_model",
     "batch_size": 14,
     "epochs": 70,
     "repeat_seeds": 10,
     "metrics": "data/eye_metrics_model04.json",
-    "verbose": 2
+    "verbose": 2,
+    "directory": "/tmp/models/",
+    "get_label": "remokit.experiments.extract_face.get_label",
+    "preprocess": [
+      {
+        "has_faces": false,
+        "get_label": "remokit.datasets.kdef.get_label",
+        "get_files": "remokit.datasets.kdef.get_files",
+        "directory": "data/KDEF-straight_cut/eyes-mouth/eyes"
+      }
+    ]
 }

@@ -23,12 +23,14 @@ RGB images as input of a CNN with a classifier for the emotions.
 
 from __future__ import absolute_import
 
-import sys
+from copy import deepcopy
+from sys import argv
 from remokit.experiments import train, evaluate, predict
 from remokit.datasets import get_tvt_filenames
 from remokit.dataset import permute_index_kfold
 from remokit.utils import load_fun, set_seed, clean_session, load_config
 from remokit.metrics import save_metrics
+from remokit.experiments.extract_face import merge
 
 
 def run_experiment(test_index, validation_index, config):
@@ -86,4 +88,27 @@ def run_all(config):
             clean_session()
 
 
-run_all(load_config(sys.argv[1]))
+def preprocess(config):
+    """Preprocess images."""
+    # collect configurations
+    config_list = []
+    for prep in config['preprocess']:
+        c = deepcopy(prep)
+        c['destination'] = config['directory']
+        c['image_size'] = deepcopy(config['image_size'])
+        config_list.append(c)
+    # merge datasets
+    indices = merge(config_list)
+    print(indices)
+
+
+def main(args):
+    config = load_config(args[2])
+
+    if args[1] == 'preprocess':
+        preprocess(config)
+    else:
+        run_all(config)
+
+
+main(deepcopy(argv))

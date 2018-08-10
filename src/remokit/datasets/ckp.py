@@ -54,8 +54,6 @@ def get_files(directory):
             # then the emotion faces
             for imgname in imgs[-slice_width:]:
                 abs_name = os.path.join(img_path, imgname)
-                #  label = get_label(abs_name)
-                #  print(label, abs_name)
                 yield abs_name
         except ExpressionNotFound:
             # skip contempt expression
