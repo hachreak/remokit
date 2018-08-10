@@ -165,6 +165,12 @@ def stream_batch(stream, size):
             yield batch
 
 
+def stream(fun, stream):
+    """Transform a function into a stream."""
+    for value in stream:
+        yield fun(value)
+
+
 def apply_to_x(fun):
     """Apply function to X."""
     def f(batch):
