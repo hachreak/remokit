@@ -33,24 +33,26 @@ def prepare_batch(config):
     stream = ds.stream(ds.apply_to_x(detect.load_img), stream)
     stream = ds.stream(ds.apply_to_x(adapters.astype('uint8')), stream)
     stream = ds.stream(ds.apply_to_x(features.get_face()), stream)
+    stream = ds.stream(ds.apply_to_x(adapters.rgb_to_bn), stream)
     stream = ds.stream(
         ds.apply_to_x(adapters.resize(**config['image_size'])), stream
     )
+    stream = ds.stream(ds.apply_to_x(adapters.astype('uint8')), stream)
 
     return stream
 
 
 def save(batches, config, indices=None):
     """Save preprocessed images."""
-    indices = indices or {v: 0 for v in ds._category.keys()}
-    index = 0
+    indices = indices or {v: 0 for v in ds._category.keys() + ['index']}
+    print(indices)
     for X, y in batches:
         if y == 'neutral':
-            index += 1
+            indices['index'] += 1
         indices[y] += 1
-        filename = '{0:08}_{1}_{2}.jpg'.format(index, y, indices[y])
+        filename = '{0:08}_{1}_{2}.jpg'.format(indices['index'], y, indices[y])
         destination = os.path.join(config['destination'], filename)
-        dlib.save_image(X.astype('uint8'), destination)
+        dlib.save_image(X, destination)
         print(destination)
     return indices
 
