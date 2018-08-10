@@ -260,3 +260,10 @@ def to_predict(model):
     def f(batch):
         return model.predict(batch)
     return f
+
+
+def add_label(get_label):
+    """Add label."""
+    def f(X):
+        return X, get_label(X)
+    return f

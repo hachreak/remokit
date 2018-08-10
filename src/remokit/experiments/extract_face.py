@@ -20,14 +20,17 @@
 
 import os
 import dlib
-from remokit import dataset as ds, adapters, utils
+from remokit import dataset as ds, adapters, utils, detect
 from remokit.preprocessing import features
 
 
 def prepare_batch(config):
     """Extract faces from the dataset."""
-    stream = utils.load_fun(config['get_files'])(config['directory'])
+    gl = utils.load_fun(config['get_label'])
 
+    stream = utils.load_fun(config['get_files'])(config['directory'])
+    stream = ds.stream(ds.add_label(gl), stream)
+    stream = ds.stream(ds.apply_to_x(detect.load_img), stream)
     stream = ds.stream(ds.apply_to_x(adapters.astype('uint8')), stream)
     stream = ds.stream(ds.apply_to_x(features.get_face()), stream)
     stream = ds.stream(
@@ -42,7 +45,7 @@ def save(batches, config, init=None):
     if init is None:
         indices = {v: 0 for v in ds._category.keys()}
     index = 0
-    for (X, y) in batches:
+    for X, y in batches:
         if y == 'neutral':
             index += 1
         indices[y] += 1
