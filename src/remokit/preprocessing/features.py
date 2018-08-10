@@ -1,7 +1,6 @@
 
 """Feature extraction."""
 
-import dlib
 from .. import detect
 
 
@@ -23,7 +22,6 @@ def extract(shape_predictor):
 def expand2image(img_x, img_y):
     """Expand feature to a image."""
     def f(matrix):
-        #  img = dlib.resize_image(detect.expand2img(matrix), img_x, img_y)
         img = detect.expand2img(matrix)
         return img
 
