@@ -22,7 +22,7 @@ Dataset source: www.emotionlab.se/resources/kdef
 """
 
 import os
-from .. import detect
+from .. import detect, dataset
 
 _label = {
     'NE': 'neutral',
@@ -33,6 +33,11 @@ _label = {
     'SA': 'sad',
     'SU': 'surprised',
 }
+
+
+def get_files(directory):
+    """Get image/label files."""
+    return dataset.get_files(directory)
 
 
 def get_data(files_stream):

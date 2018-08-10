@@ -40,10 +40,9 @@ def prepare_batch(config):
     return stream
 
 
-def save(batches, config, init=None):
+def save(batches, config, indices=None):
     """Save preprocessed images."""
-    if init is None:
-        indices = {v: 0 for v in ds._category.keys()}
+    indices = indices or {v: 0 for v in ds._category.keys()}
     index = 0
     for X, y in batches:
         if y == 'neutral':
