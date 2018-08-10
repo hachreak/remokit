@@ -2,7 +2,6 @@
     "shape_predictor": "data/shape_predictor_68_face_landmarks.dat",
     "prepare_batch": "remokit.experiments.rgb_features_cnn.prepare_batch",
     "get_label": "remokit.datasets.kdef.get_label",
-    "get_data": "remokit.datasets.kdef.get_data",
     "kfolds": 10,
     "image_size": {
       "img_x": 100,

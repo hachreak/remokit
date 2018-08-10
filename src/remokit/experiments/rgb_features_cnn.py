@@ -43,7 +43,8 @@ def prepare_batch(filenames, config, epochs):
 
     filenames = dataset.epochs(filenames, epochs=epochs)
 
-    stream = load_fun(config['get_data'])(filenames)
+    get_label = load_fun(config['get_label'])
+    stream = dataset.get_data(filenames, get_label)
 
     get_labels = adapters.extract_labels()
 

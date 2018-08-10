@@ -21,6 +21,7 @@
 import os
 import numpy as np
 from keras.utils import to_categorical
+from remokit import detect
 
 
 _category = {
@@ -267,3 +268,9 @@ def add_label(get_label):
     def f(X):
         return X, get_label(X)
     return f
+
+
+def get_data(files_stream, get_label):
+    """Get a streaming of label/image to process."""
+    files_stream = stream(add_label(get_label), files_stream)
+    return stream(apply_to_x(detect.load_img), files_stream)

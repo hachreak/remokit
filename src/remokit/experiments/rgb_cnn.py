@@ -31,8 +31,7 @@ Every batch of images will be training a CNN (see config.json file).
 
 from __future__ import absolute_import
 
-from remokit import dataset, adapters
-from remokit.utils import load_fun
+from remokit import dataset, adapters, utils
 from keras.preprocessing.image import ImageDataGenerator
 
 
@@ -43,7 +42,8 @@ def prepare_batch(filenames, config, epochs):
 
     filenames = dataset.epochs(filenames, epochs=epochs)
 
-    stream = load_fun(config['get_data'])(filenames)
+    get_label = utils.load_fun(config['get_label'])
+    stream = dataset.get_data(filenames, get_label)
 
     get_labels = adapters.extract_labels()
 

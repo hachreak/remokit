@@ -58,4 +58,4 @@ def save(batches, config, indices=None):
 
 
 def get_label(filename):
-    return os.path.split(filename)[1].split('_')[0]
+    return os.path.split(filename)[1].split('_')[1]
