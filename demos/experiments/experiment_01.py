@@ -23,6 +23,7 @@ RGB images as input of a CNN with a classifier for the emotions.
 
 from __future__ import absolute_import
 
+import os
 from copy import deepcopy
 from sys import argv
 from remokit.experiments import train, evaluate, predict
@@ -97,6 +98,10 @@ def preprocess(config):
         c['destination'] = config['directory']
         c['image_size'] = deepcopy(config['image_size'])
         config_list.append(c)
+        # create stage directory
+        if not os.path.isdir(c['destination']):
+            os.makedirs(c['destination'])
+
     # merge datasets
     indices = merge(config_list)
     print(indices)

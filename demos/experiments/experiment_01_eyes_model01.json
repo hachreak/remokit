@@ -11,7 +11,7 @@
     "repeat_seeds": 10,
     "metrics": "data/eye_metrics_model01.json",
     "verbose": 2,
-    "directory": "data/stage/",
+    "directory": "data/stage/01_eyes_model01",
     "get_label": "remokit.experiments.extract_face.get_label",
     "preprocess": [
       {
