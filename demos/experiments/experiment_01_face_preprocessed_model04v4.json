@@ -1,0 +1,30 @@
+{
+    "prepare_batch": "remokit.experiments.rgb_cnn.prepare_batch",
+    "kfolds": 10,
+    "image_size": {
+      "img_x": 150,
+      "img_y": 150
+    },
+    "model": "remokit.models.model04v4.get_model",
+    "batch_size": 7,
+    "epochs": 70,
+    "repeat_seeds": 10,
+    "metrics": "data/metrics/face_preprocessing_metrics_model04v4.json",
+    "verbose": 2,
+    "directory": "data/stage/01_face_preprocessed_model04v4",
+    "get_label": "remokit.experiments.extract_face.get_label",
+    "preprocess": [
+      {
+        "has_faces": true,
+        "get_label": "remokit.datasets.kdef.get_label",
+        "get_files": "remokit.datasets.kdef.get_files",
+        "directory": "data/KDEF-straight/"
+      },
+      {
+        "has_faces": true,
+        "get_label": "remokit.datasets.ckp.get_label",
+        "get_files": "remokit.datasets.ckp.get_files",
+        "directory": "data/ck+/"
+      }
+    ]
+}
