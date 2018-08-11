@@ -49,12 +49,10 @@ def get_files(directory):
             # get img file paths
             img_path = _from_label_file_to_img_dir(label_file)
             imgs = sorted(dataset.get_files(img_path, types=['.png']))
-            slice_width = 2 if len(imgs) > 4 else 1
+            # get first neutral
             yield os.path.join(img_path, imgs[0])
             # then the emotion faces
-            for imgname in imgs[-slice_width:]:
-                abs_name = os.path.join(img_path, imgname)
-                yield abs_name
+            yield os.path.join(img_path, imgs[-1])
         except ExpressionNotFound:
             # skip contempt expression
             print("skip label {0}".format(label_file))
