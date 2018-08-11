@@ -55,6 +55,8 @@ setup(
     keywords='machine learning',
     packages={'': 'src'},  # packages,  # Required
     install_requires=[
+        'matplotlib>=2.2.2',
+        'PySide2>=5.11.1',
         'numpy>=1.14.5',
         'Keras>=2.2.0',
         'tensorflow>=1.9.0',
