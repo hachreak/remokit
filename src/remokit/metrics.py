@@ -35,7 +35,7 @@ def get_mmm(values):
     return values.min(), values.mean(), values.max()
 
 
-def get_all(metrics):
+def aggregate(metrics):
     """Get all kind of stats."""
 
     def get_class_metrics(key, metrics):
@@ -79,10 +79,10 @@ def get_all(metrics):
     }
 
 
-def aggregate(metrics_file):
+def load(metrics_file):
+    """Load raw metrics."""
     with open(metrics_file) as data_file:
-        metrics = json.load(data_file)
-    return get_all(metrics)
+        return json.load(data_file)
 
 
 def show_matrix(matrix, labels):
@@ -134,6 +134,8 @@ def show(stats):
 class NumpyEncoder(json.JSONEncoder):
 
     def default(self, obj):
+        if isinstance(obj, np.float32):
+            return float(obj)
         if isinstance(obj, np.ndarray):
             return obj.tolist()
         return json.JSONEncoder.default(self, obj)
@@ -147,3 +149,28 @@ def save_metrics(metrics, filename):
     # save metrics
     with open(filename, 'w') as outfile:
         json.dump(metrics, outfile, cls=NumpyEncoder)
+
+
+def plot_accuracy(metrics):
+    """Plot training/validation accuracy."""
+    import matplotlib
+    matplotlib.use('Qt5Agg')
+    import matplotlib.pyplot as plt
+
+    history = metrics['history']
+
+    # Get training and test accuracy histories
+    training_accuracy = history['acc']
+    test_accuracy = history['val_acc']
+
+    # Create count of the number of epochs
+    epoch_count = range(1, len(training_accuracy) + 1)
+
+    # Visualize accuracy history
+    plt.plot(epoch_count, training_accuracy, 'r--')
+    plt.plot(epoch_count, test_accuracy, 'b-')
+    plt.legend(['Training Accuracy', 'Test Accuracy'])
+    plt.xlabel('Epoch')
+    plt.ylabel('Accuracy Score')
+
+    return plt

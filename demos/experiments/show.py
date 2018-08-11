@@ -24,6 +24,26 @@ import sys
 from remokit import metrics
 
 
-for filename in sys.argv[1:]:
-    print("##### {0}\n".format(filename))
-    metrics.show(metrics.aggregate(filename))
+def show_all(filenames):
+    """Show all metrics."""
+    for filename in filenames:
+        print("##### {0}\n".format(filename))
+        metrics.show(metrics.aggregate(metrics.load(filename)))
+
+
+def plot_accuracy(run_number, filename):
+    """Plot accuracy."""
+    metrics.plot_accuracy(metrics.load(filename)[run_number]).show()
+
+
+if len(sys.argv) == 1:
+    print('Usage: {0} [accuracy] [run-number] [filename]'.format(sys.argv[0]))
+    print('       {0} [all] [filename]'.format(sys.argv[0]))
+    sys.exit(1)
+
+if sys.argv[1] == 'accuracy':
+    run_number = int(sys.argv[2])
+    filename = sys.argv[3]
+    plot_accuracy(run_number, filename)
+elif sys.argv[1] == 'all':
+    show_all(sys.argv[2:])

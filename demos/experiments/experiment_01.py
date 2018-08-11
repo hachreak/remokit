@@ -59,6 +59,8 @@ def run_experiment(test_index, validation_index, config):
     # get metrics
     m = evaluate(testing, config, prepare_batch, model=model)
 
+    m['history'] = model.history.history
+
     m['kfolds'] = {
         'k': config['kfolds'],
         'testing': test_index,
