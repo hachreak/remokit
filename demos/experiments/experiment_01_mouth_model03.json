@@ -10,7 +10,7 @@
     "batch_size": 14,
     "epochs": 70,
     "repeat_seeds": 10,
-    "metrics": "data/mouth_metrics_model03.json",
+    "metrics": "data/metrics/mouth_metrics_model03.json",
     "verbose": 2,
     "directory": "data/stage/01_mouth_model03",
     "get_label": "remokit.experiments.extract_face.get_label",

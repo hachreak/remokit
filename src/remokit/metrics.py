@@ -18,6 +18,7 @@
 
 """Metrics analysis."""
 
+import os
 import numpy as np
 import json
 
@@ -139,6 +140,10 @@ class NumpyEncoder(json.JSONEncoder):
 
 
 def save_metrics(metrics, filename):
+    # create directory if it doesn't exists
+    path, _ = os.path.split(filename)
+    if not os.path.isdir(path):
+        os.makedirs(path)
     # save metrics
     with open(filename, 'w') as outfile:
         json.dump(metrics, outfile, cls=NumpyEncoder)

@@ -9,7 +9,7 @@
     "batch_size": 7,
     "epochs": 70,
     "repeat_seeds": 10,
-    "metrics": "data/face_preprocessing_metrics_model04.json",
+    "metrics": "data/metrics/face_preprocessing_metrics_model04.json",
     "verbose": 2,
     "directory": "data/stage/01_face_preprocessed_model04",
     "get_label": "remokit.experiments.extract_face.get_label",
