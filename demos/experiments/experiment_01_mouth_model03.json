@@ -3,8 +3,8 @@
     "get_label": "remokit.datasets.kdef.get_label",
     "kfolds": 10,
     "image_size": {
-      "img_x": 150,
-      "img_y": 200
+      "img_x": 112,
+      "img_y": 150
     },
     "model": "remokit.models.model03.get_model",
     "batch_size": 14,
