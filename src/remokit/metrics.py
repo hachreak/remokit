@@ -161,15 +161,15 @@ def plot_accuracy(metrics):
 
     # Get training and test accuracy histories
     training_accuracy = history['acc']
-    test_accuracy = history['val_acc']
+    val_accuracy = history['val_acc']
 
     # Create count of the number of epochs
     epoch_count = range(1, len(training_accuracy) + 1)
 
     # Visualize accuracy history
     plt.plot(epoch_count, training_accuracy, 'r--')
-    plt.plot(epoch_count, test_accuracy, 'b-')
-    plt.legend(['Training Accuracy', 'Test Accuracy'])
+    plt.plot(epoch_count, val_accuracy, 'b-')
+    plt.legend(['Training Accuracy', 'Validation Accuracy'])
     plt.xlabel('Epoch')
     plt.ylabel('Accuracy Score')
 
