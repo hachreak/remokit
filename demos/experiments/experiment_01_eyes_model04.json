@@ -2,8 +2,8 @@
     "prepare_batch": "remokit.experiments.rgb_cnn.prepare_batch",
     "kfolds": 10,
     "image_size": {
-      "img_x": 85,
-      "img_y": 200
+      "img_x": 63,
+      "img_y": 150
     },
     "model": "remokit.models.model04.get_model",
     "batch_size": 14,
