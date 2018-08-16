@@ -43,7 +43,8 @@ class save_best(object):
         self._last_accuracy = 0
         if 'best_model' in self._config:
             destination, _ = os.path.split(self._config['best_model'])
-            os.makedirs(destination)
+            if not os.path.isdir(destination):
+                os.makedirs(destination)
 
     def __call__(self, metrics, model):
         """Save if better."""

@@ -69,5 +69,11 @@ def save(batches, config, indices=None):
     return indices
 
 
+def get_data(files_stream):
+    """Get a streaming of label/image to process."""
+    for filename in files_stream:
+        yield detect.load_img(filename), get_label(filename)
+
+
 def get_label(filename):
     return os.path.split(filename)[1].split('_')[1]
