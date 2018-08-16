@@ -13,6 +13,7 @@
     "verbose": 2,
     "directory": "data/stage/01_face_model04",
     "get_label": "remokit.experiments.extract_face.get_label",
+    "best_model": "data/best/01_face_model04_model.h5",
     "preprocess": [
       {
         "has_faces": true,

@@ -14,6 +14,7 @@
     "verbose": 2,
     "directory": "data/stage/experiment_02_features",
     "get_label": "remokit.experiments.extract_face.get_label",
+    "best_model": "data/best/02_features_model.h5",
     "preprocess": [
       {
         "has_faces": true,

@@ -35,6 +35,24 @@ from remokit.metrics import save_metrics
 from remokit.experiments.extract_face import merge
 
 
+class save_best(object):
+    """Save best model."""
+
+    def __init__(self, config):
+        self._config = config
+        self._last_accuracy = 0
+        if 'best_model' in self._config:
+            destination, _ = os.path.split(self._config['best_model'])
+            os.makedirs(destination)
+
+    def __call__(self, metrics, model):
+        """Save if better."""
+        if metrics['acc'] > self._last_accuracy:
+            self._last_accuracy = metrics['acc']
+            if 'best_model' in self._config:
+                model.save(self._config['best_model'])
+
+
 def run_experiment(test_index, validation_index, config):
     """Run a single experiment."""
     print("seed {0}".format(config['seed']))
@@ -77,18 +95,20 @@ def run_experiment(test_index, validation_index, config):
 
     m['seed'] = config['seed']
 
-    return m
+    return m, model
 
 
 def run_all(config):
     k = config['kfolds']
     metrics = []
+    save_best_model = save_best(config)
     for myseed in range(0, config['repeat_seeds']):
         config['seed'] = myseed
         for test_index, validation_index in permute_index_kfold(k):
-            m = run_experiment(test_index, validation_index, config)
+            m, model = run_experiment(test_index, validation_index, config)
             metrics.append(m)
-            save_metrics(metrics, config['metrics'])
+            save_metrics(m, config['metrics'])
+            save_best_model(m, model)
             clean_session()
 
 
