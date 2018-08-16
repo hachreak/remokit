@@ -25,6 +25,12 @@
         "get_label": "remokit.datasets.ckp.get_label",
         "get_files": "remokit.datasets.ckp.get_files",
         "directory": "data/ck+/"
+      },
+      {
+        "has_faces": true,
+        "get_label": "remokit.datasets.pics.get_label",
+        "get_files": "remokit.datasets.pics.get_files",
+        "directory": "data/pics.stir.ac.uk/pain/"
       }
     ]
 }
