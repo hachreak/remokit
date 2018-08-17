@@ -2,28 +2,28 @@
     "submodels": [
         {
             "model": "data/best/01_eyesmouth_model04_model.h5",
-            "directory": "data/stage/01_eyesmouth_model01/",
+            "directory": "data/stage/01_eyesmouth_model04/",
             "get_label": "remokit.experiments.extract_face.get_label",
             "get_data": "remokit.experiments.extract_face.get_data",
             "only_conv": false
         },
         {
             "model": "data/best/01_face_model04_model.h5",
-            "directory": "data/stage/01_face_model01/",
+            "directory": "data/stage/01_face_model04/",
             "get_label": "remokit.experiments.extract_face.get_label",
             "get_data": "remokit.experiments.extract_face.get_data",
             "only_conv": false
         },
         {
             "model": "data/best/01_eyes_model04_model.h5",
-            "directory": "data/stage/01_eyes_model01/",
+            "directory": "data/stage/01_eyes_model04/",
             "get_label": "remokit.experiments.extract_face.get_label",
             "get_data": "remokit.experiments.extract_face.get_data",
             "only_conv": false
         },
         {
             "model": "data/best/01_mouth_model04_model.h5",
-            "directory": "data/stage/01_mouth_model01/",
+            "directory": "data/stage/01_mouth_model04/",
             "get_label": "remokit.experiments.extract_face.get_label",
             "get_data": "remokit.experiments.extract_face.get_data",
             "only_conv": false
@@ -34,12 +34,12 @@
       {"test_index": 0, "validation_index": 1}
     ],
     "repeat_seeds": 10,
-    "metrics": "data/metrics/frankenstein_metrics_model01.json",
-    "directory": "data/stage/01_mouth_model01/",
+    "metrics": "data/metrics/frankenstein_metrics_model04.json",
+    "directory": "data/stage/01_mouth_model04/",
     "get_label": "remokit.experiments.extract_face.get_label",
     "model": "remokit.models.model02.get_model",
     "prepare_batch": "remokit.experiments.rgb_frankenstein.prepare_batch",
-    "best_model": "data/best/01_frankenstein_model01_model.h5",
+    "best_model": "data/best/01_frankenstein_model04_model.h5",
     "batch_size": 14,
     "epochs": 70,
     "seed": 0,
