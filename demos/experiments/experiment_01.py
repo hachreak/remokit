@@ -35,6 +35,15 @@ from remokit.experiments.extract_face import merge
 from remokit.experiments import run_experiment, save_best
 
 
+def check_if_skip(test_index, validation_index, config):
+    """Check if the configuration should be skipped."""
+    for skip in config.get('skip', []):
+        if skip['test_index'] == test_index or \
+                skip['validation_index'] == validation_index:
+            return True
+    return False
+
+
 def run_all(config):
     k = config['kfolds']
     metrics = []
@@ -42,11 +51,12 @@ def run_all(config):
     for myseed in range(0, config['repeat_seeds']):
         config['seed'] = myseed
         for test_index, validation_index in permute_index_kfold(k):
-            m, model = run_experiment(test_index, validation_index, config)
-            metrics.append(m)
-            save_metrics(m, config['metrics'])
-            save_best_model(m, model)
-            clean_session()
+            if not check_if_skip(test_index, validation_index, config):
+                m, model = run_experiment(test_index, validation_index, config)
+                metrics.append(m)
+                save_metrics(m, config['metrics'])
+                save_best_model(m, model)
+                clean_session()
 
 
 def preprocess(config):
