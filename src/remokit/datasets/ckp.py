@@ -37,7 +37,7 @@ _label = {
 }
 
 
-def get_files(directory):
+def get_files(directory, *args, **kwargs):
     """Get image/label files."""
     directory = os.path.abspath(directory)
     # for each label file, extract img files

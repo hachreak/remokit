@@ -38,9 +38,8 @@ def get_filenames(index, k, directory, get_label, batch_size):
     return _fill(v, batch_size), _fill(t, batch_size)
 
 
-def get_tvt_filenames(index_t, index_v, k, directory, get_label, batch_size):
+def get_tvt_filenames(index_t, index_v, k, filenames, get_label, batch_size):
     """Get a list of test/validating/training files splittes with kfold."""
-    filenames = dataset.get_files(directory)
     filenames = list(filenames)
     random.shuffle(filenames)
 

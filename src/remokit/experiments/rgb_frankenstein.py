@@ -27,7 +27,7 @@ from __future__ import absolute_import
 
 import os
 from copy import deepcopy
-from remokit import dataset, adapters, utils, models
+from remokit import dataset, adapters, utils, models, datasets
 
 
 def get_names_only(filenames):
@@ -38,10 +38,8 @@ def attach_basepath(basepath, names):
     return [os.path.join(basepath, name) for name in names]
 
 
-def _prepare_submodels(filenames, config):
+def _prepare_submodels(filenames, epochs, config):
     """Prepare submodels."""
-    filenames = get_names_only(filenames)
-
     merge_strategy = config.get('merge_strategy', 'flatten')
     output_shape = 0
 
@@ -53,7 +51,7 @@ def _prepare_submodels(filenames, config):
         subtrain = attach_basepath(
             subconf['directory'], subtrain
         )
-        subtrain = dataset.epochs(subtrain, epochs=config['epochs'])
+        subtrain = dataset.epochs(subtrain, epochs=epochs)
         # convert in a stream of images
         stream = get_data(subtrain)
         # load keras submodel
@@ -106,8 +104,33 @@ def prepare_batch(filenames, config, epochs):
     """Prepare a batch."""
     steps_per_epoch = len(filenames) // config['batch_size']
 
-    filenames = dataset.epochs(filenames, epochs=epochs)
+    filenames = list(dataset.epochs(filenames, epochs=epochs))
 
-    batches, output_shape, get_labels = _prepare_submodels(filenames, config)
+    batches, output_shape, get_labels = _prepare_submodels(
+        filenames, epochs, config
+    )
 
-    return batches, steps_per_epoch, output_shape, config['epochs'], get_labels
+    return batches, steps_per_epoch, output_shape, epochs, get_labels
+
+
+def get_files(submodels, directory, *args, **kwargs):
+    """Return list of files availables for all submodels."""
+    filenames = []
+    for subconf in submodels:
+        filenames.extend(
+            get_names_only(utils.load_fun(subconf['get_files'])(
+                subconf['directory'])
+            )
+        )
+
+    filenames = list(set(filenames))
+    exists = [filenames]
+    for subconf in submodels:
+        exists.append([
+            os.path.exists(f)
+            for f in attach_basepath(subconf['directory'], filenames)
+        ])
+
+    for i, f in enumerate(exists[0]):
+        if all([exists[j][i] for j in range(1, len(exists))]):
+            yield f

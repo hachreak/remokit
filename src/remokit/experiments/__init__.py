@@ -162,10 +162,15 @@ def run_experiment(test_index, validation_index, config):
 
     prepare_batch = load_fun(config['prepare_batch'])
 
+    if 'get_files' in config:
+        filenames = load_fun(config['get_files'])(**config)
+    else:
+        filenames = dataset.get_files(config['directory'])
+
     # split filenames in groups
     testing, validating, training = get_tvt_filenames(
         test_index, validation_index,
-        config['kfolds'], config['directory'],
+        config['kfolds'], filenames,
         load_fun(config['get_label']), config['batch_size']
     )
     # run training

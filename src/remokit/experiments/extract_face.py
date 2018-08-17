@@ -37,7 +37,7 @@ def prepare_batch(config):
     """Extract faces from the dataset."""
     gl = utils.load_fun(config['get_label'])
 
-    stream = utils.load_fun(config['get_files'])(config['directory'])
+    stream = utils.load_fun(config['get_files'])(**config)
     stream = ds.stream(ds.add_label(gl), stream)
     stream = ds.stream(ds.apply_to_x(detect.load_img), stream)
     stream = ds.stream(ds.apply_to_x(adapters.astype('uint8')), stream)

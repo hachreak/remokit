@@ -35,7 +35,7 @@ _label = {
 }
 
 
-def get_files(directory):
+def get_files(directory, *args, **kwargs):
     """Get image/label files."""
     return dataset.get_files(directory)
 
