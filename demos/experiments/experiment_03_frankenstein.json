@@ -30,6 +30,9 @@
         }
     ],
     "kfolds": 10,
+    "skip": [
+      {"test_index": 0, "validation_index": 1}
+    ],
     "repeat_seeds": 10,
     "metrics": "data/metrics/frankenstein_metrics_model01.json",
     "directory": "data/stage/01_mouth_model01/",
