@@ -104,7 +104,6 @@ def _prepare_submodels(filenames, config):
 # FIXME remove epochs! already use config['epochs']
 def prepare_batch(filenames, config, epochs):
     """Prepare a batch."""
-    #  shape = config['image_size']['img_x'], config['image_size']['img_y'], 1
     steps_per_epoch = len(filenames) // config['batch_size']
 
     filenames = dataset.epochs(filenames, epochs=epochs)
