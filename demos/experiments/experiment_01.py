@@ -54,7 +54,7 @@ def run_all(config):
             if not check_if_skip(test_index, validation_index, config):
                 m, model = run_experiment(test_index, validation_index, config)
                 metrics.append(m)
-                save_metrics(m, config['metrics'])
+                save_metrics(metrics, config['metrics'])
                 save_best_model(m, model)
                 clean_session()
 
