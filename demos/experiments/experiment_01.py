@@ -27,76 +27,12 @@ import os
 import shutil
 from copy import deepcopy
 from sys import argv
-from remokit.experiments import train, evaluate, predict
-from remokit.datasets import get_tvt_filenames
 from remokit.dataset import permute_index_kfold
-from remokit.utils import load_fun, set_seed, clean_session, load_config
+from remokit.utils import clean_session, load_config
 from remokit.metrics import save_metrics
 from remokit.experiments.extract_face import merge
 
-
-class save_best(object):
-    """Save best model."""
-
-    def __init__(self, config):
-        self._config = config
-        self._last_accuracy = 0
-        if 'best_model' in self._config:
-            destination, _ = os.path.split(self._config['best_model'])
-            if not os.path.isdir(destination):
-                os.makedirs(destination)
-
-    def __call__(self, metrics, model):
-        """Save if better."""
-        if metrics['acc'] > self._last_accuracy:
-            self._last_accuracy = metrics['acc']
-            if 'best_model' in self._config:
-                model.save(self._config['best_model'])
-
-
-def run_experiment(test_index, validation_index, config):
-    """Run a single experiment."""
-    print("seed {0}".format(config['seed']))
-    print("kfold: test [{0}]  validation [{1}]".format(
-        test_index, validation_index
-    ))
-
-    set_seed(config['seed'])
-
-    prepare_batch = load_fun(config['prepare_batch'])
-
-    # split filenames in groups
-    testing, validating, training = get_tvt_filenames(
-        test_index, validation_index,
-        config['kfolds'], config['directory'],
-        load_fun(config['get_label']), config['batch_size']
-    )
-    # run training
-    model = train(
-        training, validating, config, prepare_batch, verbose=config['verbose']
-    )
-    # get metrics
-    m = evaluate(testing, config, prepare_batch, model=model)
-
-    m['history'] = model.history.history
-
-    m['kfolds'] = {
-        'k': config['kfolds'],
-        'testing': test_index,
-        'validation': validation_index
-    }
-
-    # get more metrics running predict
-    matrix, report, accuracy = predict(
-        testing, config, prepare_batch, model=model
-    )
-
-    m['confusion_matrix'] = matrix
-    m['report'] = report
-
-    m['seed'] = config['seed']
-
-    return m, model
+from remokit.experiments import run_experiment, save_best
 
 
 def run_all(config):
