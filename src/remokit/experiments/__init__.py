@@ -197,4 +197,8 @@ def run_experiment(test_index, validation_index, config):
 
     m['seed'] = config['seed']
 
+    m['files'] = {
+        'testing': testing,
+        'validating': validating
+    }
     return m, model
