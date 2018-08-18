@@ -151,6 +151,16 @@ def save_metrics(metrics, filename):
         json.dump(metrics, outfile, cls=NumpyEncoder)
 
 
+def append_metrics(metric, filename):
+    """Append metrics."""
+    try:
+        metrics = json.load(open(filename, 'r'))
+    except IOError:
+        metrics = []
+    metrics.append(metric)
+    save_metrics(metrics, filename)
+
+
 def plot_accuracy(metrics):
     """Plot training/validation accuracy."""
     import matplotlib
