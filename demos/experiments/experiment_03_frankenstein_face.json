@@ -1,0 +1,43 @@
+{
+    "prepare_batch": "remokit.experiments.extract_face.prepare_batch",
+    "kfolds": 10,
+    "image_size": {
+      "img_x": 150,
+      "img_y": 150
+    },
+    "model": "remokit.models.model04.get_model",
+    "batch_size": 14,
+    "epochs": 70,
+    "repeat_seeds": 10,
+    "metrics": "data/metrics/eye_metrics_model04.json",
+    "verbose": 2,
+    "directory": "data/stage/03_frankenstein_face",
+    "get_label": "remokit.experiments.extract_face.get_label",
+    "best_model": "data/best/01_eyes_model04_model.h5",
+    "preprocess": [
+      {
+        "has_faces": true,
+        "get_label": "remokit.datasets.kdef.get_label",
+        "get_files": "remokit.experiments.rgb_frankenstein.get_files",
+        "directory": "data/KDEF-straight/",
+        "submodels": [
+          {
+            "get_files": "remokit.datasets.kdef.get_files",
+            "directory": "data/JointImages_input"
+          },
+          {
+            "get_files": "remokit.datasets.kdef.get_files",
+            "directory": "data/KDEF-straight/"
+          },
+          {
+            "get_files": "remokit.datasets.kdef.get_files",
+            "directory": "data/KDEF-straight_cut/eyes-mouth/eyes"
+          },
+          {
+            "get_files": "remokit.datasets.kdef.get_files",
+            "directory": "data/KDEF-straight_cut/eyes-mouth/mouth"
+          }
+        ]
+      }
+    ]
+}
