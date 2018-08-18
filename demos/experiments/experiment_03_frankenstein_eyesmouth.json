@@ -12,8 +12,8 @@
     "metrics": "data/metrics/eye_metrics_model04.json",
     "verbose": 2,
     "directory": "data/stage/03_frankenstein_eyesmouth",
-    "get_label": "remokit.experiments.extract_face.get_label",
-    "best_model": "data/best/01_eyes_model04_model.h5",
+    "get_label": "remokit.preprocessing.extract_face.get_label",
+    "best_model": "data/best/03_frankenstein_eyesmouth.h5",
     "preprocess": [
       {
         "has_faces": false,

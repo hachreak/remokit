@@ -12,7 +12,7 @@
     "metrics": "data/metrics/face_metrics_model03.json",
     "verbose": 2,
     "directory": "data/stage/01_face_model03",
-    "get_label": "remokit.experiments.extract_face.get_label",
+    "get_label": "remokit.preprocessing.extract_face.get_label",
     "best_model": "data/best/01_face_model03_model.h5",
     "preprocess": [
       {

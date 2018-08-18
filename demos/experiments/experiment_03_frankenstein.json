@@ -1,7 +1,7 @@
 {
     "submodels": [
         {
-            "model": "data/best/01_eyesmouth_model04_model.h5",
+            "model": "data/best/03_frankenstein_eyesmouth.h5",
             "directory": "data/JointImages_input",
             "get_label": "remokit.datasets.kdef.get_label",
             "get_files": "remokit.datasets.kdef.get_files",
@@ -9,7 +9,7 @@
             "only_conv": false
         },
         {
-            "model": "data/best/01_face_model04_model.h5",
+            "model": "data/best/03_frankenstein_face.h5",
             "directory": "data/KDEF-straight/",
             "get_label": "remokit.datasets.kdef.get_label",
             "get_files": "remokit.datasets.kdef.get_files",
@@ -17,7 +17,7 @@
             "only_conv": false
         },
         {
-            "model": "data/best/01_eyes_model04_model.h5",
+            "model": "data/best/03_frankenstein_eyes.h5",
             "directory": "data/KDEF-straight_cut/eyes-mouth/eyes",
             "get_label": "remokit.datasets.kdef.get_label",
             "get_files": "remokit.datasets.kdef.get_files",
@@ -25,7 +25,7 @@
             "only_conv": false
         },
         {
-            "model": "data/best/01_mouth_model04_model.h5",
+            "model": "data/best/03_frankenstein_mouth.h5",
             "directory": "data/KDEF-straight_cut/eyes-mouth/mouth",
             "get_label": "remokit.datasets.kdef.get_label",
             "get_files": "remokit.datasets.kdef.get_files",

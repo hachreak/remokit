@@ -20,8 +20,6 @@
 
 import os
 import numpy as np
-import shutil
-from copy import deepcopy
 from remokit.train import compile_, run
 from remokit import dataset
 from remokit.utils import load_fun, set_seed
@@ -201,30 +199,3 @@ def run_experiment(test_index, validation_index, config):
     m['seed'] = config['seed']
 
     return m, model
-
-
-def _merge(prepare_batch, save, config_list):
-    """Merge different datasets in a single preprocessed dataset."""
-    indices = None
-    for config in config_list:
-        stream = prepare_batch(config)
-        indices = save(stream, config, indices)
-    return indices
-
-
-def preprocess(prepare_batch, save, config):
-    """Preprocess images."""
-    # collect configurations
-    config_list = []
-    for prep in config['preprocess']:
-        c = deepcopy(prep)
-        c['destination'] = config['directory']
-        c['image_size'] = deepcopy(config['image_size'])
-        config_list.append(c)
-        # create stage directory
-        shutil.rmtree(c['destination'], ignore_errors=True)
-        os.makedirs(c['destination'])
-
-    # merge datasets
-    indices = _merge(prepare_batch, save, config_list)
-    print(indices)
