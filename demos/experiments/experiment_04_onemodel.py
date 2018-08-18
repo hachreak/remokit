@@ -26,6 +26,7 @@ from remokit.utils import load_config
 
 from remokit.experiments import run_experiment, save_best
 from remokit.preprocessing.extract_face import save, preprocess
+from remokit.metrics import save_metrics
 
 
 def run(test_index, validation_index, myseed, config):
@@ -33,6 +34,7 @@ def run(test_index, validation_index, myseed, config):
     save_best_model = save_best(config)
     m, model = run_experiment(test_index, validation_index, config)
     save_best_model(m, model)
+    save_metrics([m], config['metrics'])
 
 
 def main(args):
