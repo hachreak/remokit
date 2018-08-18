@@ -23,15 +23,14 @@ RGB images as input of a CNN with a classifier for the emotions.
 
 from __future__ import absolute_import
 
-import os
 from copy import deepcopy
 from sys import argv
 from remokit.dataset import permute_index_kfold
-from remokit.utils import clean_session, load_config
+from remokit.utils import clean_session, load_config, load_fun
 from remokit.metrics import save_metrics
 
 from remokit.experiments import run_experiment, save_best, preprocess
-from remokit.experiments.extract_face import prepare_batch, save
+from remokit.experiments.extract_face import save
 
 
 def check_if_skip(test_index, validation_index, config):
@@ -62,6 +61,7 @@ def main(args):
     config = load_config(args[2])
 
     if args[1] == 'preprocess':
+        prepare_batch = load_fun(config['prepare_batch'])
         preprocess(prepare_batch, save, config)
     else:
         run_all(config)

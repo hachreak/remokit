@@ -22,10 +22,10 @@ from __future__ import absolute_import
 
 from sys import argv, exit
 from copy import deepcopy
-from remokit.utils import load_config
+from remokit.utils import load_config, load_fun
 
 from remokit.experiments import run_experiment, save_best, preprocess
-from remokit.experiments.extract_face import prepare_batch, save
+from remokit.experiments.extract_face import save
 
 
 def run(test_index, validation_index, myseed, config):
@@ -45,6 +45,7 @@ def main(args):
 
     config = load_config(args[2])
     if args[1] == 'preprocess':
+        prepare_batch = load_fun(config['prepare_batch'])
         preprocess(prepare_batch, save, config)
     else:
         test_index = int(args[3])
