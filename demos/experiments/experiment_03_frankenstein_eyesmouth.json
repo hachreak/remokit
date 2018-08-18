@@ -9,7 +9,7 @@
     "batch_size": 14,
     "epochs": 70,
     "repeat_seeds": 10,
-    "metrics": "data/metrics/eye_metrics_model04.json",
+    "metrics": "data/metrics/03_frankenstein_eyesmouth.json",
     "verbose": 2,
     "directory": "data/stage/03_frankenstein_eyesmouth",
     "get_label": "remokit.preprocessing.extract_face.get_label",
