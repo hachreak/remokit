@@ -24,15 +24,6 @@ from remokit import dataset as ds, adapters, utils, detect
 from remokit.preprocessing import features
 
 
-def merge(config_list):
-    """Merge different datasets in a single preprocessed dataset."""
-    indices = None
-    for config in config_list:
-        stream = prepare_batch(config)
-        indices = save(stream, config, indices)
-    return indices
-
-
 def prepare_batch(config):
     """Extract faces from the dataset."""
     gl = utils.load_fun(config['get_label'])

@@ -27,7 +27,7 @@ from __future__ import absolute_import
 
 import os
 from copy import deepcopy
-from remokit import dataset, adapters, utils, models, datasets
+from remokit import dataset, adapters, utils, models
 
 
 def get_names_only(filenames):
@@ -40,6 +40,7 @@ def attach_basepath(basepath, names):
 
 def _prepare_submodels(filenames, epochs, config):
     """Prepare submodels."""
+    filenames = get_names_only(filenames)
     merge_strategy = config.get('merge_strategy', 'flatten')
     output_shape = 0
 
@@ -133,4 +134,4 @@ def get_files(submodels, directory, *args, **kwargs):
 
     for i, f in enumerate(exists[0]):
         if all([exists[j][i] for j in range(1, len(exists))]):
-            yield f
+            yield os.path.join(directory, f)

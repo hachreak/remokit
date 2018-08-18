@@ -24,7 +24,8 @@ from sys import argv, exit
 from copy import deepcopy
 from remokit.utils import load_config
 
-from remokit.experiments import run_experiment, save_best
+from remokit.experiments import run_experiment, save_best, preprocess
+from remokit.experiments.extract_face import prepare_batch, save
 
 
 def run(test_index, validation_index, myseed, config):
@@ -36,14 +37,20 @@ def run(test_index, validation_index, myseed, config):
 
 def main(args):
     if len(args) < 2:
-        menu = "Usage: {0} test_index validation_index seed config_file"
+        menu = ("Usage: {0} [preprocess] config_file \n"
+                "       {0] run config_file test_index validation_index seed "
+                "config_file")
         print(menu.format(args[0]))
         exit(1)
-    test_index = int(args[1])
-    validation_index = int(args[2])
-    myseed = args[3]
-    config = load_config(args[4])
-    run(test_index, validation_index, myseed, config)
+
+    config = load_config(args[2])
+    if args[1] == 'preprocess':
+        preprocess(prepare_batch, save, config)
+    else:
+        test_index = int(args[3])
+        validation_index = int(args[4])
+        myseed = args[5]
+        run(test_index, validation_index, myseed, config)
 
 
 main(deepcopy(argv))
