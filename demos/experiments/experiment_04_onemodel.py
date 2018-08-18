@@ -49,7 +49,7 @@ def main(args):
     else:
         test_index = int(args[3])
         validation_index = int(args[4])
-        myseed = args[5]
+        myseed = int(args[5])
         run(test_index, validation_index, myseed, config)
 
 

@@ -84,6 +84,11 @@ def save(batches, config, indices=None):
     return indices
 
 
+def get_files(directory, *args, **kwargs):
+    """Get image/label files."""
+    return ds.get_files(directory)
+
+
 def get_data(files_stream):
     """Get a streaming of label/image to process."""
     for filename in files_stream:

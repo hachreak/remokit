@@ -166,7 +166,6 @@ def run_experiment(test_index, validation_index, config):
         filenames = load_fun(config['get_files'])(**config)
     else:
         filenames = dataset.get_files(config['directory'])
-
     # split filenames in groups
     testing, validating, training = get_tvt_filenames(
         test_index, validation_index,

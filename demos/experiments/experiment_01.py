@@ -35,11 +35,11 @@ from remokit.preprocessing.extract_face import save, preprocess
 
 def check_if_skip(test_index, validation_index, config):
     """Check if the configuration should be skipped."""
-    for skip in config.get('skip', []):
-        if skip['test_index'] == test_index or \
-                skip['validation_index'] == validation_index:
-            return True
-    return False
+    for kfolds_only in config.get('kfolds_only', []):
+        if kfolds_only['test_index'] == test_index or \
+                kfolds_only['validation_index'] == validation_index:
+            return False
+    return True
 
 
 def run_all(config):
