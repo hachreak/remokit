@@ -22,8 +22,7 @@ from __future__ import absolute_import
 
 from sys import argv, exit
 from copy import deepcopy
-from remokit.utils import load_config
-
+from remokit.utils import load_config, clean_session
 from remokit.dataset import permute_index_kfold
 from remokit.experiments import run_experiment, save_best
 from remokit.preprocessing.extract_face import save, preprocess
@@ -65,6 +64,7 @@ def run_all(main_config, configs):
         m, model = run_experiment(t, v, main_config)
         save_best(main_config)(m, model)
         append_metrics(m, main_config['metrics'])
+        clean_session()
 
 
 def permute(main_config):
