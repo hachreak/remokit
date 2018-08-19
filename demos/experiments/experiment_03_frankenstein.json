@@ -34,9 +34,6 @@
         }
     ],
     "kfolds": 10,
-    "kfolds_only": [
-      {"test_index": 0, "validation_index": 1}
-    ],
     "repeat_seeds": 10,
     "metrics": "data/metrics/frankenstein_metrics_model04.json",
     "directory": "data/stage/03_frankenstein_mouth",
