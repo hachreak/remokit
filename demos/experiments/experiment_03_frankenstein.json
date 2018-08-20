@@ -44,7 +44,6 @@
     "best_model": "data/best/01_frankenstein_model04_model.h5",
     "batch_size": 14,
     "epochs": 70,
-    "seed": 0,
     "merge_strategy": "flatten",
     "verbose": 2
 }

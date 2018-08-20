@@ -61,6 +61,7 @@ def run_all(main_config, configs):
             save_best_model(m, model)
             append_metrics(m, config['metrics'])
         # run, save best/metrics for main config
+        main_config['seed'] = s
         m, model = run_experiment(t, v, main_config)
         save_best(main_config)(m, model)
         append_metrics(m, main_config['metrics'])
