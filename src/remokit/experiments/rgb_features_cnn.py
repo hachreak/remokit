@@ -31,7 +31,7 @@ Every batch of images will be training a NN (see config.json file).
 
 from __future__ import absolute_import
 
-from remokit.preprocessing import features
+import numpy as np
 from remokit import dataset, adapters
 from remokit.utils import load_fun
 
@@ -40,11 +40,12 @@ def prepare_batch(filenames, config, epochs):
     """Prepare a batch."""
     shape = 68 * 2
     steps_per_epoch = len(filenames) // config['batch_size']
+    norm_max = max(config['image_size'].values())
 
     filenames = dataset.epochs(filenames, epochs=epochs)
 
     get_label = load_fun(config['get_label'])
-    stream = dataset.get_data(filenames, get_label)
+    stream = dataset.get_data(filenames, get_label, loader=np.load)
 
     get_labels = adapters.extract_labels()
 
@@ -52,17 +53,9 @@ def prepare_batch(filenames, config, epochs):
 
     adapters_list = [
         dataset.apply_to_y(dataset.foreach(dataset.categorical)),
-        dataset.apply_to_x(dataset.foreach(adapters.rgb_to_bn)),
-        dataset.apply_to_x(dataset.foreach(
-            adapters.resize(**config['image_size'])
-        )),
-        dataset.apply_to_x(dataset.foreach(adapters.astype('uint8'))),
-        dataset.apply_to_x(dataset.foreach(
-            features.extract(config['shape_predictor'])
-        )),
         get_labels,
         dataset.apply_to_x(dataset.foreach(dataset.flatten)),
-        dataset.apply_to_x(adapters.normalize(255)),
+        dataset.apply_to_x(adapters.normalize(norm_max)),
     ]
 
     batches = dataset.batch_adapt(batches, adapters_list)
