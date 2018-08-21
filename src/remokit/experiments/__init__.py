@@ -20,7 +20,7 @@
 
 import os
 import numpy as np
-from remokit.train import compile_, run
+from remokit.train import compile_, run, default
 from remokit import dataset
 from remokit.utils import load_fun, set_seed
 from keras.models import load_model
@@ -39,14 +39,15 @@ def train(training, validating, config, prepare_batch, **kwargs):
     # FIXME is always calling next() one time more
     validation_steps -= 1
 
+    training = config.get('training', default())
     num_classes = len(dataset._category)
     model = load_fun(config['model'])(shape, num_classes)
-    model = compile_(model)
+    model = compile_(model, config=training)
 
     run(
         model, batches, steps_per_epoch, epochs,
         validation_data=validation_data, validation_steps=validation_steps,
-        **kwargs
+        config=training, **kwargs
     )
 
     if 'result' in config:

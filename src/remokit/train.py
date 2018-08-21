@@ -23,21 +23,41 @@ from keras.optimizers import Adam
 from keras.callbacks import EarlyStopping, ReduceLROnPlateau
 
 
-def compile_(model):
+def default():
+    """Default configuration."""
+    return {
+      "early_stop": {
+        "mode": "auto",
+        "monitor": "val_loss",
+        "min_delta": 0,
+        "patience": 20
+      },
+      "reduce_lr": {
+        "monitor": "val_loss",
+        "factor": 0.5,
+        "patience": 10,
+        "min_lr": 0.0001
+      },
+      "optimizer": {
+        "lr": 0.001
+      }
+    }
+
+
+def compile_(model, config):
     """Compile model before train."""
     # compile model
-    model.compile(loss=categorical_crossentropy, optimizer=Adam(lr=0.001),
+    model.compile(loss=categorical_crossentropy,
+                  optimizer=Adam(**config['optimizer']),
                   metrics=['accuracy'])
     return model
 
 
-def run(model, batches, steps_per_epoch, epochs, validation_data=None,
+def run(model, batches, steps_per_epoch, epochs, config, validation_data=None,
         validation_steps=None, history=None, **kwargs):
     """Run training."""
-    early_stop = EarlyStopping(monitor='val_loss', min_delta=0, patience=7,
-                               verbose=1, mode='auto')
-    reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.5,
-                                  verbose=1, patience=3, min_lr=0.0001)
+    early_stop = EarlyStopping(verbose=1, **config['early_stop'])
+    reduce_lr = ReduceLROnPlateau(verbose=1, **config['reduce_lr'])
 
     model.fit_generator(
         generator=batches, max_queue_size=1,
