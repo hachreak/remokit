@@ -1,22 +1,27 @@
 {
-    "shape_predictor": "data/shape_predictor_68_face_landmarks.dat",
     "prepare_batch": "remokit.experiments.rgb_features_cnn.prepare_batch",
     "kfolds": 10,
     "image_size": {
-      "img_x": 200,
-      "img_y": 200
+      "img_x": 100,
+      "img_y": 100
     },
-    "model": "remokit.models.model02.get_model",
+    "model": "remokit.models.model07.get_model",
     "batch_size": 14,
-    "epochs": 70,
+    "epochs": 600,
     "repeat_seeds": 10,
     "metrics": "data/metrics/metrics_exp02.json",
     "verbose": 2,
     "directory": "data/stage/experiment_02_features",
+    "files_types": [".npy"],
     "get_label": "remokit.preprocessing.extract_face.get_label",
     "best_model": "data/best/02_features_model.h5",
     "preprocess": [
       {
+        "prepare_batch": "remokit.preprocessing.features.prepare_batch",
+        "save": "remokit.preprocessing.features.save",
+        "shape_predictor": "data/shape_predictor_68_face_landmarks.dat",
+        "only_features": true,
+        "expand_to_image": true,
         "has_faces": true,
         "get_label": "remokit.datasets.kdef.get_label",
         "get_files": "remokit.datasets.kdef.get_files",
