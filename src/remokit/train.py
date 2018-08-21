@@ -30,12 +30,12 @@ def default():
         "mode": "auto",
         "monitor": "val_loss",
         "min_delta": 0,
-        "patience": 20
+        "patience": 10
       },
       "reduce_lr": {
         "monitor": "val_loss",
         "factor": 0.5,
-        "patience": 10,
+        "patience": 5,
         "min_lr": 0.0001
       },
       "optimizer": {
