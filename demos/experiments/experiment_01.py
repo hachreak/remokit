@@ -30,16 +30,7 @@ from remokit.utils import clean_session, load_config
 from remokit.metrics import save_metrics
 
 from remokit.experiments import run_experiment, save_best
-from remokit.preprocessing.extract_face import save, preprocess
-
-
-def check_if_skip(test_index, validation_index, config):
-    """Check if the configuration should be skipped."""
-    for kfolds_only in config.get('kfolds_only', []):
-        if kfolds_only['test_index'] == test_index or \
-                kfolds_only['validation_index'] == validation_index:
-            return False
-    return True
+from remokit.preprocessing import preprocess
 
 
 def run_all(config):
@@ -49,12 +40,11 @@ def run_all(config):
     for myseed in range(0, config['repeat_seeds']):
         config['seed'] = myseed
         for test_index, validation_index in permute_index_kfold(k):
-            if not check_if_skip(test_index, validation_index, config):
-                m, model = run_experiment(test_index, validation_index, config)
-                metrics.append(m)
-                save_metrics(metrics, config['metrics'])
-                save_best_model(m, model)
-                clean_session()
+            m, model = run_experiment(test_index, validation_index, config)
+            metrics.append(m)
+            save_metrics(metrics, config['metrics'])
+            save_best_model(m, model)
+            clean_session()
 
 
 def main(args):
@@ -62,8 +52,7 @@ def main(args):
 
     if args[1] == 'preprocess':
         # make all preprocessing stages before pass them to the CNN
-        #  prepare_batch = load_fun(config['prepare_batch'])
-        preprocess(save, config)
+        preprocess(config)
     else:
         run_all(config)
 

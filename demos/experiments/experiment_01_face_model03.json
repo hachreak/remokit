@@ -16,6 +16,8 @@
     "best_model": "data/best/01_face_model03_model.h5",
     "preprocess": [
       {
+        "prepare_batch": "remokit.preprocessing.extract_face.prepare_batch",
+        "save": "remokit.preprocessing.extract_face.save",
         "has_faces": true,
         "get_label": "remokit.datasets.kdef.get_label",
         "get_files": "remokit.datasets.kdef.get_files",

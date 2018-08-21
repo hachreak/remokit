@@ -16,6 +16,8 @@
     "best_model": "data/best/01_mouth_model01_model.h5",
     "preprocess": [
       {
+        "prepare_batch": "remokit.preprocessing.extract_face.prepare_batch",
+        "save": "remokit.preprocessing.extract_face.save",
         "has_faces": false,
         "get_label": "remokit.datasets.kdef.get_label",
         "get_files": "remokit.datasets.kdef.get_files",

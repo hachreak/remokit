@@ -19,33 +19,9 @@
 """Preprocessing: extract face from images."""
 
 import os
-import shutil
 import dlib
-from copy import deepcopy
 from remokit import dataset as ds, adapters, utils, detect
 from remokit.preprocessing import features
-
-
-def preprocess(save, config):
-    """Preprocess images."""
-    # create stage directory
-    shutil.rmtree(config['directory'], ignore_errors=True)
-    os.makedirs(config['directory'])
-
-    # collect configurations
-    config_list = []
-    for prep in config['preprocess']:
-        c = deepcopy(prep)
-        c['destination'] = config['directory']
-        c['image_size'] = deepcopy(config['image_size'])
-        config_list.append(c)
-
-    # merge datasets
-    indices = None
-    for config in config_list:
-        stream = prepare_batch(config)
-        indices = save(stream, config, indices)
-    print(indices)
 
 
 def prepare_batch(config):
