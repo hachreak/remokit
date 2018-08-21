@@ -270,7 +270,8 @@ def add_label(get_label):
     return f
 
 
-def get_data(files_stream, get_label):
+def get_data(files_stream, get_label, loader=None):
     """Get a streaming of label/image to process."""
+    loader = loader or detect.load_img
     files_stream = stream(add_label(get_label), files_stream)
-    return stream(apply_to_x(detect.load_img), files_stream)
+    return stream(apply_to_x(loader), files_stream)
