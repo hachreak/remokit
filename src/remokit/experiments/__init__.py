@@ -30,12 +30,16 @@ from remokit.datasets import get_tvt_filenames
 
 
 def train(training, validating, config, prepare_batch, **kwargs):
-    batches, steps_per_epoch, shape, _ = prepare_batch(
+    batches, shape, _ = prepare_batch(
         training, config, config['epochs']
     )
-    validation_data, validation_steps, _, _ = prepare_batch(
+    steps_per_epoch = len(training) // config['batch_size']
+
+    validation_data, _, _ = prepare_batch(
         validating, config, config['epochs']
     )
+    validation_steps = len(validating) // config['batch_size']
+
     # FIXME is always calling next() one time more
     validation_steps -= 1
 
@@ -57,9 +61,10 @@ def train(training, validating, config, prepare_batch, **kwargs):
 
 
 def predict(testing, config, prepare_batch, **kwargs):
-    batches, steps_per_epoch, shape, get_labels = prepare_batch(
+    batches, shape, get_labels = prepare_batch(
         testing, config, 1
     )
+    steps_per_epoch = len(testing) // config['batch_size']
 
     if 'result' in config:
         model = load_model(config['result'])
@@ -116,9 +121,10 @@ def predict(testing, config, prepare_batch, **kwargs):
 
 def evaluate(testing, config, prepare_batch, **kwargs):
     """Evaluate."""
-    batches, steps_per_epoch, shape, epochs, get_labels = prepare_batch(
+    batches, shape, get_labels = prepare_batch(
         testing, config, 1
     )
+    steps_per_epoch = len(testing) // config['batch_size']
 
     if 'result' in config:
         model = load_model(config['result'])

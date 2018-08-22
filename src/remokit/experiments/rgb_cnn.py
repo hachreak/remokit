@@ -38,7 +38,6 @@ from keras.preprocessing.image import ImageDataGenerator
 def prepare_batch(filenames, config, epochs):
     """Prepare a batch."""
     shape = config['image_size']['img_x'], config['image_size']['img_y'], 1
-    steps_per_epoch = len(filenames) // config['batch_size']
 
     filenames = dataset.epochs(filenames, epochs=epochs)
 
@@ -67,4 +66,4 @@ def prepare_batch(filenames, config, epochs):
 
     batches = dataset.batch_adapt(batches, adapters_list)
 
-    return batches, steps_per_epoch, shape, get_labels
+    return batches, shape, get_labels

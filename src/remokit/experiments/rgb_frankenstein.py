@@ -102,15 +102,13 @@ def _prepare_submodels(filenames, config, epochs):
 
 def prepare_batch(filenames, config, epochs):
     """Prepare a batch."""
-    steps_per_epoch = len(filenames) // config['batch_size']
-
     filenames = list(dataset.epochs(filenames, epochs=epochs))
 
     batches, output_shape, get_labels = _prepare_submodels(
         filenames, config, epochs
     )
 
-    return batches, steps_per_epoch, output_shape, get_labels
+    return batches, output_shape, get_labels
 
 
 def get_files(submodels, directory, *args, **kwargs):

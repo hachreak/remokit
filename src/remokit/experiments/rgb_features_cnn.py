@@ -39,7 +39,6 @@ from remokit.utils import load_fun
 def prepare_batch(filenames, config, epochs):
     """Prepare a batch."""
     shape = 68 * 2
-    steps_per_epoch = len(filenames) // config['batch_size']
     norm_max = max(config['image_size'].values())
 
     filenames = dataset.epochs(filenames, epochs=epochs)
@@ -60,4 +59,4 @@ def prepare_batch(filenames, config, epochs):
 
     batches = dataset.batch_adapt(batches, adapters_list)
 
-    return batches, steps_per_epoch, shape, get_labels
+    return batches, shape, get_labels
