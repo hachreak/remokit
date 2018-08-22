@@ -21,7 +21,7 @@
 import os
 import numpy as np
 from remokit.train import compile_, run, default
-from remokit import dataset
+from remokit import dataset, adapters
 from remokit.utils import load_fun, set_seed
 from keras.models import load_model
 from sklearn.metrics import classification_report, confusion_matrix, \
@@ -30,12 +30,12 @@ from remokit.datasets import get_tvt_filenames
 
 
 def train(training, validating, config, prepare_batch, **kwargs):
-    batches, shape, _ = prepare_batch(
+    batches, shape = prepare_batch(
         training, config, config['epochs']
     )
     steps_per_epoch = len(training) // config['batch_size']
 
-    validation_data, _, _ = prepare_batch(
+    validation_data, _ = prepare_batch(
         validating, config, config['epochs']
     )
     validation_steps = len(validating) // config['batch_size']
@@ -61,12 +61,18 @@ def train(training, validating, config, prepare_batch, **kwargs):
 
 
 def predict(testing, config, prepare_batch, **kwargs):
-    batches, shape, get_labels = prepare_batch(
+    """Make predictions."""
+    model = kwargs['model']
+
+    # build input batch stream
+    batches, shape = prepare_batch(
         testing, config, 1
     )
     steps_per_epoch = len(testing) // config['batch_size']
 
-    model = kwargs['model']
+    # read with label is trying to predict
+    get_labels = adapters.extract_labels()
+    batches = dataset.batch_adapt(batches, [get_labels])
 
     y_pred = model.predict_generator(batches, steps=steps_per_epoch)
 
@@ -118,9 +124,7 @@ def predict(testing, config, prepare_batch, **kwargs):
 
 def evaluate(testing, config, prepare_batch, **kwargs):
     """Evaluate."""
-    batches, shape, get_labels = prepare_batch(
-        testing, config, 1
-    )
+    batches, shape = prepare_batch(testing, config, 1)
     steps_per_epoch = len(testing) // config['batch_size']
 
     if 'result' in config:

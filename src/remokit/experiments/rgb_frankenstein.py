@@ -83,8 +83,6 @@ def _prepare_submodels(filenames, config, epochs):
 
         batches_list.append(batches)
 
-    get_labels = adapters.extract_labels()
-
     if merge_strategy == 'flatten':
         todo = dataset.flatten
     #  elif merge_strategy == 'mean':
@@ -94,21 +92,20 @@ def _prepare_submodels(filenames, config, epochs):
 
     return dataset.merge_batches(
         batches_list, adapters=[
-            dataset.apply_to_x(dataset.foreach(todo)),
-            get_labels
+            dataset.apply_to_x(dataset.foreach(todo))
         ]
-    ), output_shape, get_labels
+    ), output_shape
 
 
 def prepare_batch(filenames, config, epochs):
     """Prepare a batch."""
     filenames = list(dataset.epochs(filenames, epochs=epochs))
 
-    batches, output_shape, get_labels = _prepare_submodels(
+    batches, output_shape = _prepare_submodels(
         filenames, config, epochs
     )
 
-    return batches, output_shape, get_labels
+    return batches, output_shape
 
 
 def get_files(submodels, directory, *args, **kwargs):

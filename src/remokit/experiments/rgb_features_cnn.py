@@ -46,17 +46,11 @@ def prepare_batch(filenames, config, epochs):
     get_label = load_fun(config['get_label'])
     stream = dataset.get_data(filenames, get_label, loader=np.load)
 
-    get_labels = adapters.extract_labels()
-
     batches = dataset.stream_batch(stream, config['batch_size'])
-
-    adapters_list = [
+    batches = dataset.batch_adapt(batches, [
         dataset.apply_to_y(dataset.foreach(dataset.categorical)),
-        get_labels,
         dataset.apply_to_x(dataset.foreach(dataset.flatten)),
         dataset.apply_to_x(adapters.normalize(norm_max)),
-    ]
+    ])
 
-    batches = dataset.batch_adapt(batches, adapters_list)
-
-    return batches, shape, get_labels
+    return batches, shape

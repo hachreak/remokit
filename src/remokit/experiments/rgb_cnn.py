@@ -44,13 +44,10 @@ def prepare_batch(filenames, config, epochs):
     get_label = utils.load_fun(config['get_label'])
     stream = dataset.get_data(filenames, get_label)
 
-    get_labels = adapters.extract_labels()
-
     batches = dataset.stream_batch(stream, config['batch_size'])
 
     adapters_list = [
         dataset.apply_to_y(dataset.foreach(dataset.categorical)),
-        get_labels,
         dataset.apply_to_x(dataset.foreach(adapters.rgb_to_bn)),
         dataset.apply_to_x(adapters.matrix_to_bn)
     ]
@@ -66,4 +63,4 @@ def prepare_batch(filenames, config, epochs):
 
     batches = dataset.batch_adapt(batches, adapters_list)
 
-    return batches, shape, get_labels
+    return batches, shape
