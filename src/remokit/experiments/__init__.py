@@ -66,10 +66,7 @@ def predict(testing, config, prepare_batch, **kwargs):
     )
     steps_per_epoch = len(testing) // config['batch_size']
 
-    if 'result' in config:
-        model = load_model(config['result'])
-    else:
-        model = kwargs['model']
+    model = kwargs['model']
 
     y_pred = model.predict_generator(batches, steps=steps_per_epoch)
 
