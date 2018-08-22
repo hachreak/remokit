@@ -32,7 +32,7 @@ def extract(get_value, metrics):
 
 def get_mmm(values):
     """Get some basic info as min, avg, max."""
-    return values.min(), values.mean(), values.max()
+    return values.min(), values.mean(), values.max(), np.var(values)
 
 
 def aggregate(metrics):
@@ -94,9 +94,9 @@ def show_matrix(matrix, labels):
 
 def show_mmm(name, key, stats):
     """Show min/mean/max."""
-    (min_, mean_, max_) = stats[key]
-    print("{0}: {1:8} {2:8} {3:8}".format(
-        name, round(min_, 2), round(mean_, 2), round(max_, 2)
+    (min_, mean_, max_, var) = stats[key]
+    print("{0}: {1:8} {2:8} {3:8} {4:12}".format(
+        name, round(min_, 2), round(mean_, 2), round(max_, 2), round(var, 6)
     ))
 
 
@@ -109,7 +109,7 @@ def show_prf(stats):
     for c, value in stats['report']['classes'].items():
         to_print = "{0:12}".format(c)
         for k in labels:
-            (_, mean, _) = value[k]
+            mean = value[k][1]
             to_print += "{0:12}".format(round(mean, 2))
         print(to_print)
 
@@ -120,7 +120,9 @@ def show(stats):
     print("Valid   : {0}".format(stats['count']['valid']))
     print("Invalid : {0}".format(stats['count']['invalid']))
     print("")
-    print("{0:14} {1:8}{2:9}{3:12}".format(" ", "min", "mean", "max"))
+    print("{0:14} {1:8}{2:9}{3:9}{4:10}".format(
+        " ", "min", "mean", "max", "variance"
+    ))
     show_mmm("Accuracy", "acc", stats)
     show_mmm("Loss    ", "loss", stats)
     print("")
