@@ -20,12 +20,13 @@
 
 from __future__ import absolute_import
 
+import os
 from sys import argv, exit
 from copy import deepcopy
 from remokit.utils import load_config, clean_session
 from remokit.dataset import permute_index_kfold
 from remokit.experiments import run_experiment, save_best
-from remokit.preprocessing.extract_face import save, preprocess
+from remokit.preprocessing import preprocess
 from remokit.metrics import append_metrics
 
 
@@ -37,7 +38,7 @@ def load_all(config_files):
 def preprocess_all(configs):
     """Preprocess all."""
     for config in configs:
-        preprocess(save, config)
+        preprocess(config)
 
 
 def copy_conf(main_config, configs):
@@ -75,14 +76,24 @@ def permute(main_config):
             yield test_index, validation_index, myseed
 
 
+def get_config_filenames(filename, main_config):
+    """Get configuration filenames for submodels."""
+    directory, _ = os.path.split(filename)
+    return [os.path.join(directory, s['config'])
+            for s in main_config['submodels']]
+
+
 def main(args):
     if len(args) < 2:
-        menu = "Usage: {0} [main_config] config_file1 config_file2 ... \n"
+        menu = "Usage: {0} [main_config]"
         print(menu.format(args[0]))
         exit(1)
 
-    main_config = load_config(args[1])
-    configs = copy_conf(main_config, load_all(args[2:]))
+    filename = args[1]
+    main_config = load_config(filename)
+    configs = copy_conf(
+        main_config, load_all(get_config_filenames(filename, main_config))
+    )
     preprocess_all(configs)
     run_all(main_config, configs)
 
