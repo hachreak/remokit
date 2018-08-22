@@ -25,7 +25,7 @@ from sys import argv, exit
 from copy import deepcopy
 from remokit.utils import load_config, clean_session
 from remokit.dataset import permute_index_kfold
-from remokit.experiments import run_experiment, save_best
+from remokit.experiments import run_experiment
 from remokit.preprocessing import preprocess
 from remokit.metrics import append_metrics
 
@@ -54,17 +54,16 @@ def copy_conf(main_config, configs):
 def run_all(main_config, configs):
     """Run all."""
     for t, v, s in permute(main_config):
+        # run, save best/metrics for each submodel
         for config in configs:
             config['seed'] = s
-            save_best_model = save_best(config)
-            # run, save best/metrics
             m, model = run_experiment(t, v, config)
-            save_best_model(m, model)
+            model.save(config['best_model'])
             append_metrics(m, config['metrics'])
         # run, save best/metrics for main config
         main_config['seed'] = s
         m, model = run_experiment(t, v, main_config)
-        save_best(main_config)(m, model)
+        model.save(config['best_model'])
         append_metrics(m, main_config['metrics'])
         clean_session()
 
