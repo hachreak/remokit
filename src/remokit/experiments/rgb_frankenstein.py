@@ -38,7 +38,7 @@ def attach_basepath(basepath, names):
     return [os.path.join(basepath, name) for name in names]
 
 
-def _prepare_submodels(filenames, epochs, config):
+def _prepare_submodels(filenames, config, epochs):
     """Prepare submodels."""
     filenames = get_names_only(filenames)
     merge_strategy = config.get('merge_strategy', 'flatten')
@@ -100,7 +100,6 @@ def _prepare_submodels(filenames, epochs, config):
     ), output_shape, get_labels
 
 
-# FIXME remove epochs! already use config['epochs']
 def prepare_batch(filenames, config, epochs):
     """Prepare a batch."""
     steps_per_epoch = len(filenames) // config['batch_size']
@@ -108,10 +107,10 @@ def prepare_batch(filenames, config, epochs):
     filenames = list(dataset.epochs(filenames, epochs=epochs))
 
     batches, output_shape, get_labels = _prepare_submodels(
-        filenames, epochs, config
+        filenames, config, epochs
     )
 
-    return batches, steps_per_epoch, output_shape, epochs, get_labels
+    return batches, steps_per_epoch, output_shape, get_labels
 
 
 def get_files(submodels, directory, *args, **kwargs):

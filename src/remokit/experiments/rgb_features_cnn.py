@@ -60,4 +60,4 @@ def prepare_batch(filenames, config, epochs):
 
     batches = dataset.batch_adapt(batches, adapters_list)
 
-    return batches, steps_per_epoch, shape, config['epochs'], get_labels
+    return batches, steps_per_epoch, shape, get_labels
