@@ -21,18 +21,18 @@
 from keras.layers import Conv2D, MaxPooling2D, concatenate, AveragePooling2D
 
 
-def get_model(input_img):
+def get_model(input_img, size):
     """Get an inception layer."""
-    tower_1 = Conv2D(64, (1, 1), padding='same', activation='relu')(input_img)
-    tower_1 = Conv2D(64, (3, 3), padding='same', activation='relu')(tower_1)
+    t1 = Conv2D(size, (1, 1), padding='same', activation='relu')(input_img)
+    t1 = Conv2D(size, (3, 3), padding='same', activation='relu')(t1)
 
-    tower_2 = Conv2D(64, (1, 1), padding='same', activation='relu')(input_img)
-    tower_2 = Conv2D(64, (5, 5), padding='same', activation='relu')(tower_2)
+    t2 = Conv2D(size, (1, 1), padding='same', activation='relu')(input_img)
+    t2 = Conv2D(size, (5, 5), padding='same', activation='relu')(t2)
 
-    tower_3 = MaxPooling2D((3, 3), strides=(1, 1), padding='same')(input_img)
-    tower_3 = Conv2D(64, (1, 1), padding='same', activation='relu')(tower_3)
+    t3 = MaxPooling2D((3, 3), strides=(1, 1), padding='same')(input_img)
+    t3 = Conv2D(size, (1, 1), padding='same', activation='relu')(t3)
 
-    conc = concatenate([tower_1, tower_2, tower_3], axis=3)
+    conc = concatenate([t1, t2, t3], axis=3)
     pool = AveragePooling2D((3, 3), strides=(1, 1), padding='same')(conc)
 
     return pool

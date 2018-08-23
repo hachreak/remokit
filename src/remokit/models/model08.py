@@ -28,9 +28,9 @@ def get_model(input_shape, num_classes):
     """Get a model with 2 inception layers."""
     input_img = Input(shape=input_shape)
 
-    inc1 = inception(input_img)
-    inc2 = inception(inc1)
-    flat = Flatten()(inc2)
+    inc1 = inception(input_img, 3)
+    inc2 = inception(inc1, 3)
+    flat = Flatten()(inc2, 3)
 
     dense1 = Dense(
         512, activation='relu',
