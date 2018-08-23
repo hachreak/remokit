@@ -18,7 +18,7 @@
 
 """Model 08 definition."""
 
-from keras.models import Model
+from keras.models import Model, regularizers
 from keras.layers import Dense, Flatten, Dropout, Input
 
 from .inception import get_model as inception
@@ -32,8 +32,14 @@ def get_model(input_shape, num_classes):
     inc2 = inception(inc1)
     flat = Flatten()(inc2)
 
-    dense1 = Dense(512, activation='relu')(flat)
+    dense1 = Dense(
+        512, activation='relu',
+        kernel_regularizer=regularizers.l2(0.01)
+    )(flat)
     drop1 = Dropout(0.5)(dense1)
-    dense2 = Dense(num_classes, activation='softmax')(drop1)
+    dense2 = Dense(
+        num_classes, activation='softmax',
+        kernel_regularizer=regularizers.l2(0.01)
+    )(drop1)
 
     return Model(inputs=input_img, output=dense2)
