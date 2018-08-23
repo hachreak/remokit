@@ -18,7 +18,8 @@
 
 """Model 08 definition."""
 
-from keras.models import Model, regularizers
+from keras import regularizers
+from keras.models import Model
 from keras.layers import Dense, Flatten, Dropout, Input
 
 from .inception import get_model as inception
@@ -29,8 +30,8 @@ def get_model(input_shape, num_classes):
     input_img = Input(shape=input_shape)
 
     inc1 = inception(input_img, 3)
-    inc2 = inception(inc1, 3)
-    flat = Flatten()(inc2, 3)
+    inc2 = inception(inc1, 2)
+    flat = Flatten()(inc2)
 
     dense1 = Dense(
         512, activation='relu',
