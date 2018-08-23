@@ -2,6 +2,7 @@
 """Feature extraction."""
 
 import os
+import cv2
 import numpy as np
 
 from .. import detect, dataset as ds, adapters, utils
@@ -19,7 +20,7 @@ def get_face():
     return f
 
 
-def extract(shape_predictor):
+def extract_shape(shape_predictor):
     """Extract features in a face image stream."""
     detector = detect.get_detector()
     predictor = detect.get_predictor(shape_predictor)
@@ -27,19 +28,39 @@ def extract(shape_predictor):
     def f(img):
         dets = detect.detect(detector, img)
         shapes = detect.shapes(img, predictor, dets)
-        for shape in shapes:
-            matrix = detect.shape2matrix(shape)
-            return matrix
-
+        return shapes[0]
     return f
 
 
 def expand2image(img_x, img_y):
     """Expand feature to a image."""
     def f(matrix):
-        img = detect.expand2img(matrix)
-        return img
+        return detect.expand2img(matrix)
+    return f
 
+
+def extract_part(name, extract_shape):
+    """Extract a part of the image (e.g. the eyes)."""
+    rules = {
+        'eyes': [37, 48, 0.1, 0.25],
+        'mouth': [49, 68, 0.07, 0.07],
+        'nose': [28, 36, 0.07, 0.07],
+    }
+
+    def f(img):
+        # extract shape
+        shape = extract_shape(img)
+        matrix = np.array([
+            [part.y, part.x] for part in shape.parts()
+        ]).astype(np.int32)
+        # get only interested shape
+        bound = matrix[rules[name][0]: rules[name][1]]
+        # extract face part with a small margin
+        (x, y, w, h) = cv2.boundingRect(bound)
+        margin_x = int(x * rules[name][2])
+        margin_y = int(y * rules[name][3])
+        return img[x - margin_x:x + w + margin_x,
+                   y - margin_y:y + h + margin_y]
     return f
 
 
@@ -58,9 +79,10 @@ def prepare_batch(config):
     if config['has_faces']:
         stream = ds.stream(ds.apply_to_x(get_face()), stream)
     if config.get('only_features', False):
-        stream = ds.stream(ds.apply_to_x(extract(
+        stream = ds.stream(ds.apply_to_x(extract_shape(
             config['shape_predictor']
         )), stream)
+        stream = ds.stream(ds.apply_to_x(detect.shape2matrix), stream)
     stream = ds.stream(ds.apply_to_x(adapters.astype('uint8')), stream)
 
     return stream

@@ -36,16 +36,18 @@ batches = dataset.stream_batch(stream, 1)
 
 batches = dataset.batch_adapt(batches, [
     dataset.apply_to_y(dataset.foreach(dataset.categorical)),
-    dataset.apply_to_x(dataset.foreach(
-        adapters.resize(100, 100)
-    )),
+    #  dataset.apply_to_x(dataset.foreach(
+    #      adapters.resize(100, 100)
+    #  )),
     dataset.apply_to_x(dataset.foreach(adapters.astype('uint8'))),
-    dataset.apply_to_x(dataset.foreach(
-        features.extract_shape(shape_predictor)
-    )),
-    dataset.apply_to_x(dataset.foreach(detect.shape2matrix)),
-    dataset.apply_to_x(dataset.foreach(features.expand2image(100, 100)))
-
+    #  dataset.apply_to_x(dataset.foreach(
+    #      features.extract_shape(shape_predictor)
+    #  )),
+    dataset.apply_to_x(dataset.foreach(features.extract_part(
+        'nose', features.extract_shape(shape_predictor)
+    ))),
+    #  dataset.apply_to_x(dataset.foreach(detect.shape2matrix)),
+    #  dataset.apply_to_x(dataset.foreach(features.expand2image(100, 100)))
 ])
 
 x, y = next(batches)
