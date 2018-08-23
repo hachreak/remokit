@@ -7,7 +7,7 @@
     },
     "model": "remokit.models.model08.get_model",
     "batch_size": 14,
-    "epochs": 70,
+    "epochs": 150,
     "repeat_seeds": 10,
     "metrics": "data/metrics/face_metrics_model08.json",
     "verbose": 2,
