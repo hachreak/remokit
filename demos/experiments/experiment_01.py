@@ -24,7 +24,7 @@ RGB images as input of a CNN with a classifier for the emotions.
 from __future__ import absolute_import
 
 from copy import deepcopy
-from sys import argv
+from sys import argv, exit
 from remokit.dataset import permute_index_kfold
 from remokit.utils import clean_session, load_config
 from remokit.metrics import save_metrics
@@ -48,6 +48,10 @@ def run_all(config):
 
 
 def main(args):
+    if len(args) < 3:
+        print("Usage: {0} [preprocess|run] [config_file.json]".format(args[0]))
+        exit(1)
+
     config = load_config(args[2])
 
     if args[1] == 'preprocess':
