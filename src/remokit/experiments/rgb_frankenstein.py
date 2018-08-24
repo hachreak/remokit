@@ -45,15 +45,13 @@ def _prepare_submodels(filenames, config, epochs):
 
     batches_list = []
     for subconf in config['submodels']:
-        get_data = utils.load_fun(subconf['get_data'])
+        #  get_data = utils.load_fun(subconf['get_data'])
         # get filenames for the submodel
         subtrain = deepcopy(filenames)
         subtrain = attach_basepath(
             subconf['directory'], subtrain
         )
         subtrain = dataset.epochs(subtrain, epochs=epochs)
-        # convert in a stream of images
-        stream = get_data(subtrain)
         # load keras submodel
         submodel = models.load_model(subconf['model'])
 
@@ -64,13 +62,9 @@ def _prepare_submodels(filenames, config, epochs):
         (_, img_x, img_y, _) = submodel.input_shape
 
         # build prediction batches
-        batches = dataset.stream_batch(stream, config['batch_size'])
+        prepare = utils.load_fun(subconf['prepare_batch'])
+        batches, _shape = prepare(subtrain, subconf, config['epochs'])
         batches = dataset.batch_adapt(batches, [
-            dataset.apply_to_y(dataset.foreach(dataset.categorical)),
-            dataset.apply_to_x(dataset.foreach(adapters.rgb_to_bn)),
-            dataset.apply_to_x(dataset.foreach(adapters.resize(img_x, img_y))),
-            dataset.apply_to_x(adapters.matrix_to_bn),
-            dataset.apply_to_x(adapters.normalize(255)),
             dataset.apply_to_x(dataset.to_predict(submodel)),
         ])
 

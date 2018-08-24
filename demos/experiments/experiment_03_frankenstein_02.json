@@ -7,7 +7,7 @@
             "get_label": "remokit.preprocessing.extract_face.get_label",
             "get_files": "remokit.preprocessing.extract_face.get_files",
             "get_data": "remokit.preprocessing.extract_face.get_data",
-            "only_conv": false
+            "prepare_batch": "remokit.experiments.rgb_cnn.prepare_batch"
         },
         {
             "config": "experiment_03_frankenstein_face.json",
@@ -16,7 +16,7 @@
             "get_label": "remokit.preprocessing.extract_face.get_label",
             "get_files": "remokit.preprocessing.extract_face.get_files",
             "get_data": "remokit.preprocessing.extract_face.get_data",
-            "only_conv": false
+            "prepare_batch": "remokit.experiments.rgb_cnn.prepare_batch"
         },
         {
             "config": "experiment_03_frankenstein_eyes.json",
@@ -25,7 +25,7 @@
             "get_label": "remokit.preprocessing.extract_face.get_label",
             "get_files": "remokit.preprocessing.extract_face.get_files",
             "get_data": "remokit.preprocessing.extract_face.get_data",
-            "only_conv": false
+            "prepare_batch": "remokit.experiments.rgb_cnn.prepare_batch"
         },
         {
             "config": "experiment_03_frankenstein_mouth.json",
@@ -34,7 +34,7 @@
             "get_label": "remokit.preprocessing.extract_face.get_label",
             "get_files": "remokit.preprocessing.extract_face.get_files",
             "get_data": "remokit.preprocessing.extract_face.get_data",
-            "only_conv": false
+            "prepare_batch": "remokit.experiments.rgb_cnn.prepare_batch"
         }
     ],
     "kfolds": 10,
@@ -48,6 +48,5 @@
     "best_model": "data/best/03_frankenstein_02.h5",
     "batch_size": 14,
     "epochs": 70,
-    "merge_strategy": "flatten",
     "verbose": 2
 }
