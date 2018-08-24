@@ -31,12 +31,12 @@ def get_model(input_shape, num_classes):
     input_img = Input(shape=input_shape)
 
     c1 = Conv2D(
-        32, kernel_size=(7, 7), strides=(2, 2), activation='relu'
+        16, kernel_size=(7, 7), strides=(2, 2), activation='relu'
     )(input_img)
     m1 = MaxPooling2D(pool_size=(3, 3), strides=(2, 2))(c1)
 
     inc1 = inception(m1, 8)
-    inc2 = inception(inc1, 8)
+    inc2 = inception(inc1, 4)
 
     pool = AveragePooling2D((5, 5), strides=(1, 1), padding='same')(inc2)
     flat = Flatten()(pool)
@@ -45,7 +45,7 @@ def get_model(input_shape, num_classes):
         1024, activation='relu',
         kernel_regularizer=regularizers.l2(0.01)
     )(flat)
-    drop1 = Dropout(0.5)(dense1)
+    drop1 = Dropout(0.4)(dense1)
     dense2 = Dense(
         num_classes, activation='softmax',
         kernel_regularizer=regularizers.l2(0.01)
