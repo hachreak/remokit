@@ -41,7 +41,6 @@ def attach_basepath(basepath, names):
 def _prepare_submodels(filenames, config, epochs):
     """Prepare submodels."""
     filenames = get_names_only(filenames)
-    merge_strategy = config.get('merge_strategy', 'flatten')
     output_shape = 0
 
     batches_list = []
@@ -57,16 +56,10 @@ def _prepare_submodels(filenames, config, epochs):
         stream = get_data(subtrain)
         # load keras submodel
         submodel = models.load_model(subconf['model'])
-        # with/without the classification layer
-        #  if subconf.get('only_conv', False):
-        #      submodel = models.get_conv_layers(submodel)
+
         # compute the output shape
         (_, shape) = submodel.output_shape
-        #  if merge_strategy == 'flatten':
         output_shape += shape
-        #  else:
-        #      output_shape = shape
-
         # input shape
         (_, img_x, img_y, _) = submodel.input_shape
 
@@ -83,12 +76,7 @@ def _prepare_submodels(filenames, config, epochs):
 
         batches_list.append(batches)
 
-    if merge_strategy == 'flatten':
-        todo = dataset.flatten
-    #  elif merge_strategy == 'mean':
-    #      todo = lambda x: np.mean(x, axis=0)
-    #  else:
-    #      todo = lambda x: np.max(x, axis=0)
+    todo = dataset.flatten
 
     return dataset.merge_batches(
         batches_list, adapters=[
