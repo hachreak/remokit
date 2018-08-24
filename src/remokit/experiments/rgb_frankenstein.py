@@ -58,8 +58,8 @@ def _prepare_submodels(filenames, config, epochs):
         # load keras submodel
         submodel = models.load_model(subconf['model'])
         # with/without the classification layer
-        if subconf.get('only_conv', False):
-            submodel = models.get_conv_layers(submodel)
+        #  if subconf.get('only_conv', False):
+        #      submodel = models.get_conv_layers(submodel)
         # compute the output shape
         (_, shape) = submodel.output_shape
         #  if merge_strategy == 'flatten':
