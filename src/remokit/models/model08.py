@@ -20,7 +20,8 @@
 
 from keras import regularizers
 from keras.models import Model
-from keras.layers import Dense, Flatten, Dropout, Input
+from keras.layers import Dense, Flatten, Dropout, Input, AveragePooling2D, \
+    Conv2D, MaxPooling2D
 
 from .inception import get_model as inception
 
@@ -29,12 +30,19 @@ def get_model(input_shape, num_classes):
     """Get a model with 2 inception layers."""
     input_img = Input(shape=input_shape)
 
-    inc1 = inception(input_img, 3)
-    inc2 = inception(inc1, 2)
-    flat = Flatten()(inc2)
+    c1 = Conv2D(
+        32, kernel_size=(7, 7), strides=(2, 2), activation='relu'
+    )(input_img)
+    m1 = MaxPooling2D(pool_size=(3, 3), strides=(2, 2))(c1)
+
+    inc1 = inception(m1, 8)
+    inc2 = inception(inc1, 8)
+
+    pool = AveragePooling2D((5, 5), strides=(1, 1), padding='same')(inc2)
+    flat = Flatten()(pool)
 
     dense1 = Dense(
-        512, activation='relu',
+        1024, activation='relu',
         kernel_regularizer=regularizers.l2(0.01)
     )(flat)
     drop1 = Dropout(0.5)(dense1)

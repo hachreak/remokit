@@ -18,7 +18,7 @@
 
 """Inception definition."""
 
-from keras.layers import Conv2D, MaxPooling2D, concatenate, AveragePooling2D
+from keras.layers import Conv2D, MaxPooling2D, concatenate
 
 
 def get_model(input_img, size):
@@ -33,6 +33,5 @@ def get_model(input_img, size):
     t3 = Conv2D(size, (1, 1), padding='same', activation='relu')(t3)
 
     conc = concatenate([t1, t2, t3], axis=3)
-    pool = AveragePooling2D((3, 3), strides=(1, 1), padding='same')(conc)
 
-    return pool
+    return conc
