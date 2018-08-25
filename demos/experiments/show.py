@@ -36,11 +36,24 @@ def plot_accuracy(run_number, filename):
     metrics.plot_accuracy(metrics.load(filename)[run_number]).show()
 
 
+def plot_confusion_matrix(filename, normalize):
+    """Plot confusion matrix."""
+    m = metrics.aggregate(metrics.load(filename))
+    if normalize:
+        m = metrics.normalize_confusion_matrix(m)
+    metrics.plot_confusion_matrix(m).show()
+
+
 if len(sys.argv) == 1:
+    print('Usage: {0} [cm] [filename] [normalized]'.format(sys.argv[0]))
     print('Usage: {0} [accuracy] [run-number] [filename]'.format(sys.argv[0]))
-    print('       {0} [all] [filename]'.format(sys.argv[0]))
+    print('       {0} [all] [filename1] [filename2] ..'.format(sys.argv[0]))
     sys.exit(1)
 
+if sys.argv[1] == 'cm':
+    filename = sys.argv[2]
+    normalize = len(sys.argv) > 3
+    plot_confusion_matrix(filename, normalize)
 if sys.argv[1] == 'accuracy':
     run_number = int(sys.argv[2])
     filename = sys.argv[3]
