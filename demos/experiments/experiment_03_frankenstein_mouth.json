@@ -1,5 +1,9 @@
 {
     "prepare_batch": "remokit.experiments.rgb_cnn.prepare_batch",
+    "full_image_size": {
+      "img_x": 300,
+      "img_y": 300
+    },
     "image_size": {
       "img_x": 110,
       "img_y": 150

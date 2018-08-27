@@ -31,32 +31,46 @@ def prepare_batch(config):
     stream = utils.load_fun(config['get_files'])(**config)
     stream = ds.stream(ds.add_label(gl), stream)
     stream = ds.stream(ds.apply_to_x(detect.load_img), stream)
-    stream = ds.stream(ds.apply_to_x(adapters.astype('uint8')), stream)
+    stream = ds.stream(
+        ds.apply_to_x(adapters.resize(**config['full_image_size'])), stream
+    )
+
+    batches = ds.stream_batch(stream, config['batch_size'])
+
+    adapters_list = [
+        ds.apply_to_x(ds.foreach(adapters.astype('uint8')))
+    ]
 
     if config['has_faces']:
-        stream = ds.stream(ds.apply_to_x(features.get_face()), stream)
+        adapters_list.append(
+            ds.apply_to_x(ds.foreach(features.get_face()))
+        )
 
-    stream = ds.stream(ds.apply_to_x(adapters.rgb_to_bn), stream)
-    stream = ds.stream(
-        ds.apply_to_x(adapters.resize(**config['image_size'])), stream
-    )
-    stream = ds.stream(ds.apply_to_x(adapters.astype('uint8')), stream)
+    adapters_list.extend([
+        ds.apply_to_x(ds.foreach(adapters.resize(**config['image_size']))),
+        ds.apply_to_x(ds.foreach(adapters.astype('uint8')))
+    ])
 
-    return stream
+    batches = ds.batch_adapt(batches, adapters_list)
+
+    return batches
 
 
 def save(batches, config, indices=None):
     """Save preprocessed images."""
     indices = indices or {v: 0 for v in ds._category.keys() + ['index']}
     print(indices)
-    for X, y in batches:
-        if y == 'neutral':
-            indices['index'] += 1
-        indices[y] += 1
-        filename = '{0:08}_{1}_{2}.jpg'.format(indices['index'], y, indices[y])
-        destination = os.path.join(config['destination'], filename)
-        dlib.save_image(X, destination)
-        print(destination)
+    for Xbatch, ybatch in batches:
+        for X, y in zip(Xbatch, ybatch):
+            if y == 'neutral':
+                indices['index'] += 1
+            indices[y] += 1
+            filename = '{0:08}_{1}_{2}.jpg'.format(
+                indices['index'], y, indices[y]
+            )
+            destination = os.path.join(config['destination'], filename)
+            dlib.save_image(X, destination)
+            print(destination)
     return indices
 
 

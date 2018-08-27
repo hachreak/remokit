@@ -35,7 +35,9 @@ def preprocess(config):
     for prep in config['preprocess']:
         c = deepcopy(prep)
         c['destination'] = config['directory']
+        c['full_image_size'] = deepcopy(config['full_image_size'])
         c['image_size'] = deepcopy(config['image_size'])
+        c['batch_size'] = config['batch_size']
         config_list.append(c)
 
     # merge datasets
