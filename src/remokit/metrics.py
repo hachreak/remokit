@@ -228,3 +228,15 @@ def plot_confusion_matrix(metrics, title='Confusion matrix', cmap=None):
     plt.xlabel(xlabel.format(accuracy, misclass))
 
     return plt
+
+
+def plot_prediction(y_pred):
+    """Plot predictions."""
+    plt.xlabel('Sequence')
+    plt.ylabel('Prediction')
+    labels = dataset.ordered_categories()
+    indices = list(range(0, len(y_pred)))
+    for i in range(0, len(y_pred[0])):
+        plt.plot(indices, [y[i] for y in y_pred], label=labels[i])
+    plt.legend()
+    plt.show()

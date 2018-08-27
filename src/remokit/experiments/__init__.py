@@ -60,10 +60,8 @@ def train(training, validating, config, prepare_batch, **kwargs):
     return model
 
 
-def predict(testing, config, prepare_batch, **kwargs):
+def predict(testing, config, prepare_batch, model, **kwargs):
     """Make predictions."""
-    model = kwargs['model']
-
     # build input batch stream
     batches, shape = prepare_batch(
         testing, config, 1
