@@ -39,23 +39,11 @@ _label = {
 
 def get_files(directory, *args, **kwargs):
     """Get image/label files."""
-    directory = os.path.abspath(directory)
-    # for each label file, extract img files
-    label_files = _get_label_files(directory)
-    for label_file in label_files:
-        try:
-            # check if is correctly labelled
-            _read_label(label_file)
-            # get img file paths
-            img_path = _from_label_file_to_img_dir(label_file)
-            imgs = sorted(dataset.get_files(img_path, types=['.png']))
-            # get first neutral
-            yield os.path.join(img_path, imgs[0])
-            # then the emotion faces
-            yield os.path.join(img_path, imgs[-1])
-        except ExpressionNotFound:
-            # skip contempt expression
-            print("skip label {0}".format(label_file))
+    for imgs in get_sequences(directory):
+        # get first neutral
+        yield imgs[0]
+        # then the emotion faces
+        yield imgs[-1]
 
 
 def get_label(filename):
@@ -72,6 +60,23 @@ def get_label(filename):
 
     fullname = os.path.join(lpath, lname)
     return _read_label(fullname)
+
+
+def get_sequences(directory):
+    """Get an entire image sequence each time."""
+    directory = os.path.abspath(directory)
+    # for each label file, extract img files
+    label_files = _get_label_files(directory)
+    for label_file in label_files:
+        try:
+            # check if is correctly labelled
+            _read_label(label_file)
+            # get img file paths
+            img_path = _from_label_file_to_img_dir(label_file)
+            yield sorted(dataset.get_files(img_path, types=['.png']))
+        except ExpressionNotFound:
+            # skip contempt expression
+            print("skip label {0}".format(label_file))
 
 
 def _read_label(label_file):
