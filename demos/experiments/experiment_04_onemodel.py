@@ -40,8 +40,7 @@ def run(test_index, validation_index, myseed, config):
 def main(args):
     if len(args) < 2:
         menu = ("Usage: {0} [preprocess] config_file \n"
-                "       {0] run config_file test_index validation_index seed "
-                "config_file")
+                "       {0] run config_file test_index validation_index seed ")
         print(menu.format(args[0]))
         exit(1)
 
