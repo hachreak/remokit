@@ -49,7 +49,10 @@ def prepare_batch(filenames, config, epochs):
     adapters_list = [
         dataset.apply_to_y(dataset.foreach(dataset.categorical)),
         dataset.apply_to_x(dataset.foreach(adapters.rgb_to_bn)),
-        dataset.apply_to_x(adapters.matrix_to_bn)
+        dataset.apply_to_x(dataset.foreach(
+            adapters.resize(**config['image_size'])
+        )),
+        dataset.apply_to_x(adapters.matrix_to_bn),
     ]
 
     if 'distortions' in config:
