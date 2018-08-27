@@ -25,7 +25,7 @@ from copy import deepcopy
 from remokit.utils import load_config
 
 from remokit.experiments import run_experiment, save_best
-from remokit.preprocessing.extract_face import save, preprocess
+from remokit.preprocessing import preprocess
 from remokit.metrics import save_metrics
 
 
@@ -47,7 +47,7 @@ def main(args):
 
     config = load_config(args[2])
     if args[1] == 'preprocess':
-        preprocess(save, config)
+        preprocess(config)
     else:
         test_index = int(args[3])
         validation_index = int(args[4])
