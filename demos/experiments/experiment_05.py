@@ -29,7 +29,6 @@ from remokit.utils import load_config, load_fun, set_seed
 from remokit.datasets import ckp, get_tvt_filenames
 from remokit.experiments import run_experiment, save_best
 from remokit.preprocessing import preprocess
-from remokit import adapters, dataset
 from remokit.metrics import plot_prediction as plot, save_metrics
 
 
@@ -41,15 +40,11 @@ def predict(testing, config, prepare_batch, model):
     )
     steps_per_epoch = len(testing) // config['batch_size']
 
-    # read with label is trying to predict
-    get_labels = adapters.extract_labels()
-    batches = dataset.batch_adapt(batches, [get_labels])
-
     return model.predict_generator(batches, steps=steps_per_epoch)
 
 
 def run(myseed, config, test_index, validation_index, i):
-    ckconf = deepcopy(config['preprocess'][1])
+    [ckconf] = [p for p in config['preprocess'] if 'ck+' in p['directory']]
     set_seed(myseed)
 
     filenames = load_fun(ckconf['get_files'])(**ckconf)

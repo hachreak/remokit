@@ -239,7 +239,7 @@ def plot_prediction(y_pred):
     for i in range(0, len(y_pred[0])):
         plt.plot(indices, [y[i] for y in y_pred], label=labels[i])
     plt.legend()
-    plt.show()
+    return plt
 
 
 def extrapolate_points(y_pred, count, degree):
