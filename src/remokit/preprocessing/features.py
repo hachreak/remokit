@@ -8,15 +8,21 @@ import numpy as np
 from .. import detect, dataset as ds, adapters, utils
 
 
-def get_face():
+def get_face(img_size=None):
     """Extract face only."""
     detector = detect.get_detector()
+    adapter = None
+    if img_size:
+        adapter = adapters.resize(**img_size)
 
     def f(img):
         dets = detect.detect(detector, img)
         for det in dets.values():
             det = det['detected']
-            return img[det.top():det.bottom(), det.left():det.right()]
+            img = img[det.top():det.bottom(), det.left():det.right()]
+            if adapter:
+                img = adapter(img)
+            return img
     return f
 
 
