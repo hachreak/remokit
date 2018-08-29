@@ -21,6 +21,7 @@
 import os
 import importlib
 import json
+import shutil
 
 
 def load_fun(name):
@@ -67,3 +68,9 @@ def load_config(filename):
     with open(filename) as data_file:
         config = json.load(data_file)
     return config
+
+
+def recreate_directory(directory):
+    """Recreate directory."""
+    shutil.rmtree(directory, ignore_errors=True)
+    os.makedirs(directory)

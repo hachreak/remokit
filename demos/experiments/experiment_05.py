@@ -20,12 +20,13 @@
 
 from __future__ import absolute_import
 
-import sys
+import os
+
 from sys import argv, exit
 from copy import deepcopy
 from keras.models import load_model
 
-from remokit.utils import load_config, load_fun, set_seed
+from remokit.utils import load_config, load_fun, set_seed, recreate_directory
 from remokit.datasets import ckp, get_tvt_filenames
 from remokit.experiments import run_experiment, save_best
 from remokit.preprocessing import preprocess
@@ -43,8 +44,15 @@ def predict(testing, config, prepare_batch, model):
     return model.predict_generator(batches, steps=steps_per_epoch)
 
 
-def run(myseed, config, test_index, validation_index, i):
+def get_ckp_conf(config):
+    """Get CK+ configuration."""
     [ckconf] = [p for p in config['preprocess'] if 'ck+' in p['directory']]
+    return ckconf
+
+
+def get_testing(config, test_index, validation_index, myseed):
+    """Get testing files."""
+    ckconf = get_ckp_conf(config)
     set_seed(myseed)
 
     filenames = load_fun(ckconf['get_files'])(**ckconf)
@@ -55,11 +63,11 @@ def run(myseed, config, test_index, validation_index, i):
         config['kfolds'], filenames,
         load_fun(ckconf['get_label']), config['batch_size']
     )
-    # print description
-    print("Sequence from: {0}".format(testing[i]))
-    print("Emotion: {0}".format(ckp.get_label(testing[i])))
-    # select one and get the entire sequence
-    testing = sorted(ckp.get_sequence(testing[i]))
+    return testing
+
+
+def predict_sequence(config, testing):
+    ckconf = get_ckp_conf(config)
 
     # load configuration
     model = load_model(config['best_model'])
@@ -68,8 +76,45 @@ def run(myseed, config, test_index, validation_index, i):
     prepare_batch = load_fun('remokit.experiments.rgb_face_cnn.prepare_batch')
 
     # plot prediction
-    y_pred = predict(testing, ckconf, prepare_batch, model)
-    plot(y_pred).show()
+    return predict(testing, ckconf, prepare_batch, model)
+
+
+def plot_title(testing):
+    """Get plot tilte."""
+    _, filepath = ckp._get_relative_path(testing[-1])
+    label = ckp.get_label(testing[-1])
+    return "Sequence from: {0}\nEmotion: {1}".format(filepath, label)
+
+
+def run_all(myseed, config, test_index, validation_index):
+    testing = get_testing(config, test_index, validation_index, myseed)
+    dest = config['predictions']
+    recreate_directory(dest)
+    for t in testing:
+        seq = sorted(ckp.get_sequence(t))
+        y_pred = predict_sequence(config, seq)
+        basename = os.path.basename(t)
+        name = "{0}_{1}_{2}_{3}.png".format(
+            basename, test_index, validation_index, myseed
+        )
+        fullname = os.path.join(dest, name)
+        plt = plot(plot_title(seq), y_pred)
+        plt.savefig(fullname)
+        plt.close(fullname)
+        plt.gcf().clear()
+        print("Plotted {0}".format(name))
+
+
+def run(myseed, config, test_index, validation_index, i):
+    testing = get_testing(config, test_index, validation_index, myseed)
+    # print description
+    print("Sequence from: {0}".format(testing[i]))
+    print("Emotion: {0}".format(ckp.get_label(testing[i])))
+    # select one and get the entire sequence
+    testing = sorted(ckp.get_sequence(testing[i]))
+    # predict and show
+    y_pred = predict_sequence(config, testing)
+    plot(plot_title(testing), y_pred).show()
 
 
 def experiment(test_index, validation_index, myseed, config):
@@ -86,7 +131,9 @@ def main(args):
                 "       {0} train [config_file] [test_index] [val_index] "
                 "[seed]\n"
                 "       {0} predict [config_file] [test_index] [val_index] "
-                "[seed] [i>0]")
+                "[seed] [i>=0]"
+                "       {0} predict [config_file] [test_index] [val_index] "
+                "[seed]")
         print(menu.format(args[0]))
         exit(1)
 
@@ -102,10 +149,11 @@ def main(args):
         myseed = int(args[3])
         test_index = int(args[4])
         validation_index = int(args[5])
-        i = int(args[6])
-        if i == 0:
-            sys.exit(1)
-        run(myseed, config, test_index, validation_index, i)
+        if len(args) < 7:
+            run_all(myseed, config, test_index, validation_index)
+        else:
+            i = int(args[6])
+            run(myseed, config, test_index, validation_index, i)
 
 
 main(deepcopy(argv))

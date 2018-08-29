@@ -16,19 +16,15 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with pysenslog.  If not, see <http://www.gnu.org/licenses/>.
 
-import os
-import shutil
 from copy import deepcopy
 
-from remokit.utils import load_fun
-#  from remokit.preprocessing.extract_face import prepare_batch
+from remokit.utils import load_fun, recreate_directory
 
 
 def preprocess(config):
     """Preprocess images."""
     # create stage directory
-    shutil.rmtree(config['directory'], ignore_errors=True)
-    os.makedirs(config['directory'])
+    recreate_directory(config['directory'])
 
     # get personalized batch_size
     batch_size = config['batch_size']
