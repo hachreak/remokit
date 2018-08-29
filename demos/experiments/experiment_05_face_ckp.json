@@ -10,6 +10,7 @@
       "img_y": 150
     },
     "model": "remokit.models.model04v2.get_model",
+    "preprocess_batch_size": 28,
     "batch_size": 7,
     "epochs": 70,
     "repeat_seeds": 10,

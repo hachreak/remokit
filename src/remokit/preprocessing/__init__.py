@@ -30,6 +30,11 @@ def preprocess(config):
     shutil.rmtree(config['directory'], ignore_errors=True)
     os.makedirs(config['directory'])
 
+    # get personalized batch_size
+    batch_size = config['batch_size']
+    if 'preprocess_batch_size' in config:
+        batch_size = config['preprocess_batch_size']
+
     # collect configurations
     config_list = []
     for prep in config['preprocess']:
@@ -37,7 +42,7 @@ def preprocess(config):
         c['destination'] = config['directory']
         c['full_image_size'] = deepcopy(config['full_image_size'])
         c['image_size'] = deepcopy(config['image_size'])
-        c['batch_size'] = config['batch_size']
+        c['batch_size'] = batch_size
         config_list.append(c)
 
     # merge datasets
