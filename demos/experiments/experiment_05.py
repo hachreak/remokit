@@ -147,9 +147,9 @@ def main(args):
         myseed = int(args[5])
         experiment(test_index, validation_index, myseed, config)
     else:
-        myseed = int(args[3])
-        test_index = int(args[4])
-        validation_index = int(args[5])
+        test_index = int(args[3])
+        validation_index = int(args[4])
+        myseed = int(args[5])
         if len(args) < 7:
             run_all(myseed, config, test_index, validation_index)
         else:
