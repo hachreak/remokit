@@ -66,11 +66,11 @@ def get_testing(config, test_index, validation_index, myseed):
     return testing
 
 
-def predict_sequence(config, testing):
+def predict_sequence(config, testing, model=None):
     ckconf = get_ckp_conf(config)
 
     # load configuration
-    model = load_model(config['best_model'])
+    model = model or load_model(config['best_model'])
     ckconf['image_size'] = deepcopy(config['image_size'])
     ckconf['batch_size'] = config['batch_size']
     prepare_batch = load_fun('remokit.experiments.rgb_face_cnn.prepare_batch')
@@ -87,12 +87,13 @@ def plot_title(testing):
 
 
 def run_all(myseed, config, test_index, validation_index):
+    model = load_model(config['best_model'])
     testing = get_testing(config, test_index, validation_index, myseed)
     dest = config['predictions']
     recreate_directory(dest)
     for t in testing:
         seq = sorted(ckp.get_sequence(t))
-        y_pred = predict_sequence(config, seq)
+        y_pred = predict_sequence(config, seq, model=model)
         basename = os.path.basename(t)
         name = "{0}_{1}_{2}_{3}.png".format(
             basename, test_index, validation_index, myseed
@@ -131,7 +132,7 @@ def main(args):
                 "       {0} train [config_file] [test_index] [val_index] "
                 "[seed]\n"
                 "       {0} predict [config_file] [test_index] [val_index] "
-                "[seed] [i>=0]"
+                "[seed] [i>=0] \n"
                 "       {0} predict [config_file] [test_index] [val_index] "
                 "[seed]")
         print(menu.format(args[0]))
