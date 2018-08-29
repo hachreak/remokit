@@ -1,18 +1,18 @@
 {
     "submodels": [
         {
-            "config": "experiment_03_frankenstein_eyesmouth.json",
-            "model": "data/best/03_frankenstein_01_eyesmouth.h5",
-            "directory": "data/stage/03_frankenstein_01_eyesmouth",
+            "config": "experiment_03_frankenstein_face.json",
+            "model": "data/best/03_frankenstein_01_face.h5",
+            "directory": "data/stage/03_frankenstein_01_face/",
             "get_label": "remokit.preprocessing.extract_face.get_label",
             "get_files": "remokit.preprocessing.extract_face.get_files",
             "get_data": "remokit.preprocessing.extract_face.get_data",
             "prepare_batch": "remokit.experiments.rgb_cnn.prepare_batch"
         },
         {
-            "config": "experiment_03_frankenstein_face.json",
-            "model": "data/best/03_frankenstein_01_face.h5",
-            "directory": "data/stage/03_frankenstein_01_face/",
+            "config": "experiment_03_frankenstein_mouth.json",
+            "model": "data/best/03_frankenstein_02_mouth.h5",
+            "directory": "data/stage/03_frankenstein_02_mouth",
             "get_label": "remokit.preprocessing.extract_face.get_label",
             "get_files": "remokit.preprocessing.extract_face.get_files",
             "get_data": "remokit.preprocessing.extract_face.get_data",
