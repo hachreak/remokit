@@ -20,12 +20,13 @@
 
 from __future__ import absolute_import
 
+import sys
 from sys import argv, exit
 from copy import deepcopy
 from keras.models import load_model
 
 from remokit.utils import load_config, load_fun, set_seed
-from remokit.datasets import ckp
+from remokit.datasets import ckp, get_tvt_filenames
 from remokit.experiments import run_experiment, save_best
 from remokit.preprocessing import preprocess
 from remokit import adapters, dataset
@@ -47,18 +48,33 @@ def predict(testing, config, prepare_batch, model):
     return model.predict_generator(batches, steps=steps_per_epoch)
 
 
-def run(myseed, config):
+def run(myseed, config, test_index, validation_index, i):
     ckconf = deepcopy(config['preprocess'][1])
+    set_seed(myseed)
 
-    testing = ckp.get_sequences(ckconf['directory'])
+    filenames = load_fun(ckconf['get_files'])(**ckconf)
+
+    # get all testing files
+    testing, _, _ = get_tvt_filenames(
+        test_index, validation_index,
+        config['kfolds'], filenames,
+        load_fun(ckconf['get_label']), config['batch_size']
+    )
+    # print description
+    print("Sequence from: {0}".format(testing[i]))
+    print("Emotion: {0}".format(ckp.get_label(testing[i])))
+    # select one and get the entire sequence
+    testing = sorted(ckp.get_sequence(testing[i]))
+
+    # load configuration
+    model = load_model(config['best_model'])
     ckconf['image_size'] = deepcopy(config['image_size'])
     ckconf['batch_size'] = config['batch_size']
-    #  ckconf['seed'] = myseed
-
-    model = load_model(config['best_model'])
     prepare_batch = load_fun('remokit.experiments.rgb_face_cnn.prepare_batch')
-    set_seed(myseed)
-    plot(predict(next(testing), ckconf, prepare_batch, model))
+
+    # plot prediction
+    y_pred = predict(testing, ckconf, prepare_batch, model)
+    plot(y_pred).show()
 
 
 def experiment(test_index, validation_index, myseed, config):
@@ -74,7 +90,8 @@ def main(args):
         menu = ("Usage: {0} preprocess [config_file] \n"
                 "       {0} train [config_file] [test_index] [val_index] "
                 "[seed]\n"
-                "       {0} predict [config_file]")
+                "       {0} predict [config_file] [test_index] [val_index] "
+                "[seed] [i>0]")
         print(menu.format(args[0]))
         exit(1)
 
@@ -88,7 +105,12 @@ def main(args):
         experiment(test_index, validation_index, myseed, config)
     else:
         myseed = int(args[3])
-        run(myseed, config)
+        test_index = int(args[4])
+        validation_index = int(args[5])
+        i = int(args[6])
+        if i == 0:
+            sys.exit(1)
+        run(myseed, config, test_index, validation_index, i)
 
 
 main(deepcopy(argv))

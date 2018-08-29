@@ -240,3 +240,17 @@ def plot_prediction(y_pred):
         plt.plot(indices, [y[i] for y in y_pred], label=labels[i])
     plt.legend()
     plt.show()
+
+
+def extrapolate_points(y_pred, count, degree):
+    """extrapolate 'count' points from prediction."""
+    orig_count = len(y_pred)
+    x = range(0, orig_count)
+    y = y_pred
+    z = np.polyfit(x, y, degree)
+    f = np.poly1d(z)
+    points = []
+    last = orig_count - 1
+    for x1 in np.linspace(0, last, count):
+        points.append(f(x1))
+    return points

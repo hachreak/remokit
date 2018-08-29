@@ -79,6 +79,12 @@ def get_sequences(directory):
             print("skip label {0}".format(label_file))
 
 
+def get_sequence(imagename):
+    """Get the entire sequence passing the name of one image."""
+    directory, _ = os.path.split(imagename)
+    return dataset.get_files(directory, types=['.png'])
+
+
 def _read_label(label_file):
     """Read fron file the label."""
     with open(label_file) as lfile:
