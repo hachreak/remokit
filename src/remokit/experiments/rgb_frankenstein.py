@@ -27,7 +27,7 @@ from __future__ import absolute_import
 
 import os
 from copy import deepcopy
-from remokit import dataset, adapters, utils, models
+from remokit import dataset, utils, models
 
 
 def get_names_only(filenames):
@@ -61,9 +61,13 @@ def _prepare_submodels(filenames, config, epochs):
         # input shape
         (_, img_x, img_y, _) = submodel.input_shape
 
+        # copy global configuration
+        subconf['image_size'] = {'img_x': img_x, 'img_y': img_y}
+        subconf['batch_size'] = config['batch_size']
+
         # build prediction batches
         prepare = utils.load_fun(subconf['prepare_batch'])
-        batches, _shape = prepare(subtrain, subconf, config['epochs'])
+        batches, _shape = prepare(subtrain, subconf, epochs)
         batches = dataset.batch_adapt(batches, [
             dataset.apply_to_x(dataset.to_predict(submodel)),
         ])

@@ -63,7 +63,7 @@ def run_all(main_config, configs):
         # run, save best/metrics for main config
         main_config['seed'] = s
         m, model = run_experiment(t, v, main_config)
-        model.save(config['best_model'])
+        model.save(main_config['best_model'])
         append_metrics(m, main_config['metrics'])
         clean_session()
 
