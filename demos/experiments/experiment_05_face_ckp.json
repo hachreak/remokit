@@ -17,7 +17,7 @@
     "metrics": "data/metrics/05_face_ckp.json",
     "verbose": 2,
     "directory": "data/stage/05_face_ckp",
-    "predictions": "data/stage/05_face_ckp_preditions",
+    "predictions": "data/metrics/05_face_ckp_preditions",
     "get_label": "remokit.preprocessing.extract_face.get_label",
     "best_model": "data/best/05_face_ckp.h5",
     "preprocess": [
