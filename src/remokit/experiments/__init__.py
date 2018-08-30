@@ -23,7 +23,6 @@ import numpy as np
 from remokit.train import compile_, run, default
 from remokit import dataset, adapters
 from remokit.utils import load_fun, set_seed
-from keras.models import load_model
 from sklearn.metrics import classification_report, confusion_matrix, \
     accuracy_score, precision_recall_fscore_support
 from remokit.datasets import get_tvt_filenames
@@ -120,16 +119,10 @@ def predict(testing, config, prepare_batch, model, **kwargs):
     return matrix, report, accuracy
 
 
-def evaluate(testing, config, prepare_batch, **kwargs):
+def evaluate(testing, config, prepare_batch, model, **kwargs):
     """Evaluate."""
     batches, shape = prepare_batch(testing, config, 1)
     steps_per_epoch = len(testing) // config['batch_size']
-
-    # FIXME remove "result" key
-    if 'result' in config:
-        model = load_model(config['result'])
-    else:
-        model = kwargs['model']
 
     metrics = model.evaluate_generator(batches, steps=steps_per_epoch)
 
@@ -186,7 +179,7 @@ class files_split(object):
             load_fun(config['get_label']), config['batch_size']
         )
 
-    def __exit__(self):
+    def __exit__(self, *args, **kwargs):
         pass
 
 
@@ -194,8 +187,6 @@ def get_metrics(testing, config, prepare_batch, model):
     """Get more metrics from evaluated model."""
     # get metrics
     m = evaluate(testing, config, prepare_batch, model=model)
-
-    m['history'] = model.history.history
 
     # get more metrics running predict
     matrix, report, accuracy = predict(
@@ -225,6 +216,8 @@ def run_experiment(test_index, validation_index, config):
             verbose=config['verbose']
         )
         m = get_metrics(testing, config, prepare_batch, model)
+
+        m['history'] = model.history.history
 
         m['kfolds'] = {
             'k': config['kfolds'],

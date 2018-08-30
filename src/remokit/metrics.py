@@ -24,8 +24,13 @@ import json
 import itertools
 
 import matplotlib
+from keras import activations
+
 matplotlib.use('Qt5Agg')
-from matplotlib import pyplot as plt  # pylint: disable=E402
+from matplotlib import pyplot as plt  # disable=E402
+
+from vis.visualization import visualize_saliency
+from vis.utils import utils
 
 from . import dataset
 
@@ -255,3 +260,29 @@ def extrapolate_points(y_pred, count, degree):
     for x1 in np.linspace(0, last, count):
         points.append(f(x1))
     return points
+
+
+def plot_saliency(model, batches, cmap=None):
+    """Visualize saliency."""
+    # color map
+    if cmap is None:
+        cmap = plt.get_cmap('Blues')
+    # Swap softmax with linear
+    layer_idx = len(model.layers) - 1
+    model.layers[layer_idx].activation = activations.linear
+    model = utils.apply_modifications(model)
+
+    for x_test, y_test in batches:
+        for class_idx in range(0, len(x_test)):
+            idx = dataset.categorical2category(y_test[class_idx])
+
+            grads = visualize_saliency(
+                model, layer_idx, filter_indices=idx,
+                seed_input=x_test[class_idx],
+                backprop_modifier='guided'
+            )
+            # Plot with 'jet' colormap to visualize as a heatmap.
+            plt.imshow(grads, cmap='jet')
+            plt.colorbar()
+            plt.suptitle(dataset.category2label(idx))
+            yield plt
