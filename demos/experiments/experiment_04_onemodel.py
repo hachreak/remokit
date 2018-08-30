@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with pysenslog.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Experiment 03 - run a single model and save the result."""
+"""Experiment 04 - run a single model and save the result."""
 
 from __future__ import absolute_import
 

@@ -125,6 +125,7 @@ def evaluate(testing, config, prepare_batch, **kwargs):
     batches, shape = prepare_batch(testing, config, 1)
     steps_per_epoch = len(testing) // config['batch_size']
 
+    # FIXME remove "result" key
     if 'result' in config:
         model = load_model(config['result'])
     else:
@@ -157,42 +158,44 @@ class save_best(object):
                 model.save(self._config['best_model'])
 
 
-def run_experiment(test_index, validation_index, config):
-    """Run a single experiment."""
-    print("seed {0}".format(config['seed']))
-    print("kfold: test [{0}]  validation [{1}]".format(
-        test_index, validation_index
-    ))
+class files_split(object):
 
-    set_seed(config['seed'])
+    def __init__(self, test_index, validation_index, config):
+        self._config = config
+        self._test_index = test_index
+        self._validation_index = validation_index
 
-    prepare_batch = load_fun(config['prepare_batch'])
+    def __enter__(self):
+        config = self._config
+        test_index = self._test_index
+        validation_index = self._validation_index
 
-    if 'get_files' in config:
-        filenames = load_fun(config['get_files'])(**config)
-    else:
-        filenames = dataset.get_files(config['directory'],
-                                      types=config.get('files_types'))
-    # split filenames in groups
-    testing, validating, training = get_tvt_filenames(
-        test_index, validation_index,
-        config['kfolds'], filenames,
-        load_fun(config['get_label']), config['batch_size']
-    )
-    # run training
-    model = train(
-        training, validating, config, prepare_batch, verbose=config['verbose']
-    )
+        print("kfold: test [{0}]  validation [{1}]".format(
+            test_index, validation_index
+        ))
+
+        if 'get_files' in config:
+            filenames = load_fun(config['get_files'])(**config)
+        else:
+            filenames = dataset.get_files(config['directory'],
+                                          types=config.get('files_types'))
+        # split filenames in groups
+        return get_tvt_filenames(
+            test_index, validation_index,
+            config['kfolds'], filenames,
+            load_fun(config['get_label']), config['batch_size']
+        )
+
+    def __exit__(self):
+        pass
+
+
+def get_metrics(testing, config, prepare_batch, model):
+    """Get more metrics from evaluated model."""
     # get metrics
     m = evaluate(testing, config, prepare_batch, model=model)
 
     m['history'] = model.history.history
-
-    m['kfolds'] = {
-        'k': config['kfolds'],
-        'testing': test_index,
-        'validation': validation_index
-    }
 
     # get more metrics running predict
     matrix, report, accuracy = predict(
@@ -204,8 +207,29 @@ def run_experiment(test_index, validation_index, config):
 
     m['seed'] = config['seed']
 
-    m['files'] = {
-        'testing': testing,
-        'validating': validating
-    }
+    return m
+
+
+def run_experiment(test_index, validation_index, config):
+    """Run a single experiment."""
+    print("seed {0}".format(config['seed']))
+    set_seed(config['seed'])
+
+    prepare_batch = load_fun(config['prepare_batch'])
+
+    with files_split(test_index, validation_index, config) as files:
+        testing, validating, training = files
+        # run training
+        model = train(
+            training, validating, config, prepare_batch,
+            verbose=config['verbose']
+        )
+        m = get_metrics(testing, config, prepare_batch, model)
+
+        m['kfolds'] = {
+            'k': config['kfolds'],
+            'testing': test_index,
+            'validation': validation_index
+        }
+
     return m, model
