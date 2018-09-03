@@ -19,6 +19,7 @@
 """Face detector."""
 
 import dlib
+import cv2
 import numpy as np
 
 
@@ -34,7 +35,10 @@ def get_predictor(predictor_path):
 
 def load_img(filename):
     """Load a image from file."""
-    return dlib.load_rgb_image(filename)
+    try:
+        return dlib.load_rgb_image(filename)
+    except RuntimeError:
+        return cv2.imread(filename)
 
 
 def detect(detector, img):
