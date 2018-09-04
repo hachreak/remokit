@@ -18,7 +18,7 @@
 
 """Model 05 definition."""
 
-from keras import Sequential
+from keras import Sequential, regularizers
 from keras.layers import Dense, Flatten, Conv2D, MaxPooling2D, Dropout
 
 
@@ -45,8 +45,14 @@ def get_model(input_shape, num_classes):
     model.add(Dropout(0.25))
 
     model.add(Flatten())
-    model.add(Dense(512, activation='relu'))
+    model.add(Dense(
+        1024, activation='relu',
+        kernel_regularizer=regularizers.l2(0.01)
+    ))
     model.add(Dropout(0.5))
-    model.add(Dense(num_classes, activation='softmax'))
+    model.add(Dense(
+        num_classes, activation='softmax',
+        kernel_regularizer=regularizers.l2(0.01)
+    ))
 
     return model
