@@ -56,7 +56,7 @@ def aggregate(metrics):
             for k in report.keys()
         }
 
-    fmetrics = filter(lambda m: m['acc'] >= 0.20, metrics)
+    fmetrics = filter(lambda m: m['acc'] >= 0.50, metrics)
 
     return {
         "count": {
