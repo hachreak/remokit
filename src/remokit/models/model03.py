@@ -34,7 +34,7 @@ def get_model(input_shape, num_classes):
     model.add(Conv2D(64, (5, 5), activation='relu'))
     model.add(MaxPooling2D(pool_size=(2, 2)))
     model.add(Flatten())
-    model.add(Dense(1000, activation='relu'))
+    model.add(Dense(512, activation='relu'))
     model.add(Dense(num_classes, activation='softmax'))
 
     return model
