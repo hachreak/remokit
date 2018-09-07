@@ -22,11 +22,13 @@ from __future__ import absolute_import
 
 from sys import argv, exit
 from copy import deepcopy
-from remokit.utils import load_config
+from keras.models import load_model
 
-from remokit.experiments import run_experiment, save_best
+from remokit.utils import load_config, load_fun
+from remokit.experiments import run_experiment, save_best, predict as prd
 from remokit.preprocessing import preprocess
 from remokit.metrics import save_metrics
+from remokit import dataset
 
 
 def run(test_index, validation_index, myseed, config):
@@ -37,21 +39,39 @@ def run(test_index, validation_index, myseed, config):
     save_metrics([m], config['metrics'])
 
 
+def predict(myseed, config):
+    model = load_model(config['best_model'])
+    testing = list(dataset.get_files(
+        config['directory'],
+        types=config.get('files_types')
+    ))
+    prepare_batch = load_fun(config['prepare_batch'])
+
+    # plot prediction
+    return prd(testing, config, prepare_batch, model)
+
+
 def main(args):
     if len(args) < 2:
-        menu = ("Usage: {0} [preprocess] config_file \n"
-                "       {0] run config_file test_index validation_index seed ")
+        menu = ("Usage: {0} preprocess [config_file] \n"
+                "       {0} run [config_file] [test_index] [validation_index] "
+                "[seed] \n"
+                "       {0} predict [config_file]")
         print(menu.format(args[0]))
         exit(1)
 
     config = load_config(args[2])
     if args[1] == 'preprocess':
         preprocess(config)
-    else:
+    elif args[1] == 'run':
         test_index = int(args[3])
         validation_index = int(args[4])
         myseed = int(args[5])
         run(test_index, validation_index, myseed, config)
+    else:
+        myseed = int(args[3])
+        m, report, accuracy = predict(myseed, config)
+        #  print(m['accuracy'])
 
 
 main(deepcopy(argv))
