@@ -28,7 +28,7 @@ from keras.models import load_model
 
 from remokit.utils import load_config, load_fun, set_seed, recreate_directory
 from remokit.datasets import ckp, get_tvt_filenames
-from remokit.experiments import run_experiment, save_best, files_split
+from remokit.experiments import run_experiment, save_best
 from remokit.preprocessing import preprocess
 from remokit.metrics import plot_prediction as plot, save_metrics
 
@@ -89,39 +89,37 @@ def plot_title(testing):
 def run_all(myseed, config, test_index, validation_index):
     model = load_model(config['best_model'])
     ckconf = get_ckp_conf(config)
-    set_seed(myseed)
-    with files_split(test_index, validation_index, ckconf) as files:
-        testing, validating, training = files
-        dest = config['predictions']
-        recreate_directory(dest)
-        for t in testing:
-            seq = sorted(ckp.get_sequence(t))
-            y_pred = predict_sequence(config, seq, model=model)
-            basename = os.path.basename(t)
-            name = "{0}_{1}_{2}_{3}.png".format(
-                basename, test_index, validation_index, myseed
-            )
-            fullname = os.path.join(dest, name)
-            plt = plot(plot_title(seq), y_pred)
-            plt.savefig(fullname)
-            plt.close(fullname)
-            plt.gcf().clear()
-            print("Plotted {0}".format(name))
+    testing = list(load_fun(ckconf['get_files'])(**ckconf))
+
+    dest = config['predictions']
+    recreate_directory(dest)
+    for t in testing:
+        seq = sorted(ckp.get_sequence(t))
+        y_pred = predict_sequence(config, seq, model=model)
+        basename = os.path.basename(t)
+        name = "{0}_{1}_{2}_{3}.png".format(
+            basename, test_index, validation_index, myseed
+        )
+        fullname = os.path.join(dest, name)
+        plt = plot(plot_title(seq), y_pred)
+        plt.savefig(fullname)
+        plt.close(fullname)
+        plt.gcf().clear()
+        print("Plotted {0}".format(name))
 
 
 def run(myseed, config, test_index, validation_index, i):
     ckconf = get_ckp_conf(config)
-    set_seed(myseed)
-    with files_split(test_index, validation_index, ckconf) as files:
-        testing, validating, training = files
-        # print description
-        print("Sequence from: {0}".format(testing[i]))
-        print("Emotion: {0}".format(ckp.get_label(testing[i])))
-        # select one and get the entire sequence
-        testing = sorted(ckp.get_sequence(testing[i]))
-        # predict and show
-        y_pred = predict_sequence(config, testing)
-        plot(plot_title(testing), y_pred).show()
+    testing = list(load_fun(ckconf['get_files'])(**ckconf))
+
+    print("Sequence from: {0}".format(testing[i]))
+    print("Emotion: {0}".format(ckp.get_label(testing[i])))
+
+    # select one and get the entire sequence
+    testing = sorted(ckp.get_sequence(testing[i]))
+    # predict and show
+    y_pred = predict_sequence(config, testing)
+    plot(plot_title(testing), y_pred).show()
 
 
 def experiment(test_index, validation_index, myseed, config):
@@ -146,6 +144,10 @@ def main(args):
 
     config = load_config(args[2])
     if args[1] == 'preprocess':
+        # remove ck+
+        config['preprocess'] = filter(
+            lambda p: 'ck+' not in p['directory'], config['preprocess']
+        )
         preprocess(config)
     elif args[1] == 'train':
         test_index = int(args[3])
