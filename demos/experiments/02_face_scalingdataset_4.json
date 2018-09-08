@@ -13,11 +13,11 @@
     "batch_size": 7,
     "epochs": 70,
     "repeat_seeds": 10,
-    "metrics": "data/metrics/02_face_scalingdataset.json",
+    "metrics": "data/metrics/02_face_scalingdataset_4.json",
     "verbose": 2,
-    "directory": "data/stage/02_face_scalingdataset",
+    "directory": "data/stage/02_face_scalingdataset_4",
     "get_label": "remokit.preprocessing.extract_face.get_label",
-    "best_model": "data/best/02_face_scalingdataset.h5",
+    "best_model": "data/best/02_face_scalingdataset_4.h5",
     "preprocess": [
       {
         "prepare_batch": "remokit.preprocessing.extract_face.prepare_batch",
