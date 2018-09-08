@@ -50,6 +50,13 @@ def get_ckp_conf(config):
     return ckconf
 
 
+def get_all_expect_ckp_conf(config):
+    """Get all preprocess except ckp config."""
+    return filter(
+        lambda p: 'ck+' not in p['directory'], config['preprocess']
+    )
+
+
 def get_testing(config, test_index, validation_index, myseed):
     """Get testing files."""
     ckconf = get_ckp_conf(config)
@@ -145,9 +152,7 @@ def main(args):
     config = load_config(args[2])
     if args[1] == 'preprocess':
         # remove ck+
-        config['preprocess'] = filter(
-            lambda p: 'ck+' not in p['directory'], config['preprocess']
-        )
+        config['preprocess'] = get_all_expect_ckp_conf(config)
         preprocess(config)
     elif args[1] == 'train':
         test_index = int(args[3])
