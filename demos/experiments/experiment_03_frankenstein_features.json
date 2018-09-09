@@ -43,5 +43,21 @@
           }
         ]
       }
-    ]
+    ],
+    "training": {
+      "early_stop": {
+        "monitor": "val_loss",
+        "min_delta": 0,
+        "patience": 20
+      },
+      "reduce_lr": {
+        "mode": "auto",
+        "monitor": "val_loss",
+        "factor": 0.5,
+        "patience": 10,
+        "min_lr": 0.0001
+      },
+      "optimizer": {
+        "lr": 0.001
+      }
 }
