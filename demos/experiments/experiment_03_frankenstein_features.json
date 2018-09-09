@@ -1,0 +1,47 @@
+{
+    "prepare_batch": "remokit.experiments.rgb_features_cnn.prepare_batch",
+    "full_image_size": {
+      "img_x": 300,
+      "img_y": 300
+    },
+    "image_size": {
+      "img_x": 150,
+      "img_y": 150
+    },
+    "model": "remokit.models.model07.get_model",
+    "metrics": "data/metrics/03_frankenstein_features.json",
+    "directory": "data/stage/03_frankenstein_features",
+    "get_label": "remokit.preprocessing.features.get_label",
+    "best_model": "data/best/03_frankenstein_features.h5",
+    "files_types": [".npy"],
+    "preprocess": [
+      {
+        "prepare_batch": "remokit.preprocessing.features.prepare_batch",
+        "save": "remokit.preprocessing.features.save",
+        "shape_predictor": "data/shape_predictor_68_face_landmarks.dat",
+        "has_faces": true,
+        "only_features": true,
+        "get_label": "remokit.datasets.kdef.get_label",
+        "get_files": "remokit.experiments.rgb_frankenstein.get_files",
+        "directory": "data/KDEF-straight/",
+        "submodels": [
+          {
+            "get_files": "remokit.datasets.kdef.get_files",
+            "directory": "data/JointImages_input"
+          },
+          {
+            "get_files": "remokit.datasets.kdef.get_files",
+            "directory": "data/KDEF-straight/"
+          },
+          {
+            "get_files": "remokit.datasets.kdef.get_files",
+            "directory": "data/KDEF-straight_cut/eyes-mouth/eyes"
+          },
+          {
+            "get_files": "remokit.datasets.kdef.get_files",
+            "directory": "data/KDEF-straight_cut/eyes-mouth/mouth"
+          }
+        ]
+      }
+    ]
+}
