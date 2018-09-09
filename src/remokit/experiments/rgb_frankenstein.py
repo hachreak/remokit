@@ -53,7 +53,6 @@ def _prepare_submodels(filenames, config, epochs):
 
     batches_list = []
     for subconf in config['submodels']:
-        #  get_data = utils.load_fun(subconf['get_data'])
         # get filenames for the submodel
         subtrain = deepcopy(filenames)
         subtrain = attach_basepath(

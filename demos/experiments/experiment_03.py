@@ -32,7 +32,12 @@ from remokit.metrics import append_metrics
 
 def load_all(config_files):
     """Load config files."""
-    return [load_config(config_file) for config_file in config_files]
+    result = []
+    for config_file in config_files:
+        config = load_config(config_file)
+        config['name'] = config_file
+        result.append(config)
+    return result
 
 
 def preprocess_all(configs):
@@ -56,11 +61,13 @@ def run_all(main_config, configs):
     for t, v, s in permute(main_config):
         # run, save best/metrics for each submodel
         for config in configs:
+            print("Run submodel from {0}".format(config['name']))
             config['seed'] = s
             m, model = run_experiment(t, v, config)
             model.save(config['best_model'])
             append_metrics(m, config['metrics'])
         # run, save best/metrics for main config
+        print("Run model from {0}".format(main_config['name']))
         main_config['seed'] = s
         m, model = run_experiment(t, v, main_config)
         model.save(main_config['best_model'])
@@ -90,6 +97,7 @@ def main(args):
 
     filename = args[1]
     main_config = load_config(filename)
+    main_config['name'] = filename
     configs = copy_conf(
         main_config, load_all(get_config_filenames(filename, main_config))
     )
