@@ -38,6 +38,14 @@ def attach_basepath(basepath, names):
     return [os.path.join(basepath, name) for name in names]
 
 
+def attach_filetype(filetype, names):
+    res = []
+    for n in names:
+        name, _ = os.path.splitext(n)
+        res.append(name + filetype)
+    return res
+
+
 def _prepare_submodels(filenames, config, epochs):
     """Prepare submodels."""
     filenames = get_names_only(filenames)
@@ -51,6 +59,8 @@ def _prepare_submodels(filenames, config, epochs):
         subtrain = attach_basepath(
             subconf['directory'], subtrain
         )
+        if 'files_types' in subconf:
+            subtrain = attach_filetype(subconf['files_types'][0], subtrain)
         subtrain = dataset.epochs(subtrain, epochs=epochs)
         # load keras submodel
         submodel = models.load_model(subconf['model'])
@@ -58,11 +68,14 @@ def _prepare_submodels(filenames, config, epochs):
         # compute the output shape
         (_, shape) = submodel.output_shape
         output_shape += shape
-        # input shape
-        (_, img_x, img_y, _) = submodel.input_shape
+
+        # input shape if is not explicitly set
+        if 'image_size' not in subconf:
+            # input shape
+            (_, img_x, img_y, _) = submodel.input_shape
+            subconf['image_size'] = {'img_x': img_x, 'img_y': img_y}
 
         # copy global configuration
-        subconf['image_size'] = {'img_x': img_x, 'img_y': img_y}
         subconf['batch_size'] = config['batch_size']
 
         # build prediction batches
