@@ -29,7 +29,7 @@ import os
 import dlib
 import csv
 
-from .. import detect, dataset, utils
+from .. import detect, dataset
 
 _label = {
     'NE': 'neutral',
@@ -56,8 +56,10 @@ def get_preprocessed_files(directory, *args, **kwargs):
     """Preprocess cvs and then get file list."""
     csv_filename = list(dataset.get_files(directory, types=['.csv']))[0]
     destination = _build_destination_directory(csv_filename)
-    # extract images
-    preprocess_csv(csv_filename, destination)
+    if not os.path.exists(destination):
+        os.makedirs(destination)
+        # extract images
+        preprocess_csv(csv_filename, destination)
     # return images list
     return get_files(destination)
 
@@ -110,8 +112,6 @@ def _build_destination_directory(csv_filename):
     """Build destination directory for images contained inside the csv."""
     # create destination name
     basedir, _ = os.path.split(csv_filename)
-    destination = os.path.join(basedir, 'iamges')
-    # recreate directory
-    utils.recreate_directory(destination)
+    destination = os.path.join(basedir, 'images')
 
     return destination
