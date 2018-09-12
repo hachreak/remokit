@@ -1,0 +1,31 @@
+{
+    "prepare_batch": "remokit.experiments.rgb_cnn.prepare_batch",
+    "kfolds": 10,
+    "full_image_size": {
+      "img_x": 300,
+      "img_y": 300
+    },
+    "image_size": {
+      "img_x": 150,
+      "img_y": 150
+    },
+    "model": "remokit.models.model04v2.get_model",
+    "batch_size": 42,
+    "epochs": 70,
+    "repeat_seeds": 10,
+    "metrics": "data/metrics/01_face_fer2013_model04v2.json",
+    "verbose": 2,
+    "directory": "data/stage/01_face_fer2013",
+    "get_label": "remokit.preprocessing.extract_face.get_label",
+    "best_model": "data/best/01_face_fer2013_model04v2.h5",
+    "preprocess": [
+      {
+        "prepare_batch": "remokit.preprocessing.extract_face.prepare_batch",
+        "save": "remokit.preprocessing.extract_face.save",
+        "has_faces": false,
+        "get_label": "remokit.datasets.fer2013.get_label",
+        "get_files": "remokit.datasets.fer2013.get_preprocessed_files",
+        "directory": "data/fer2013/"
+      }
+    ]
+}
