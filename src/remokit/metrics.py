@@ -181,6 +181,27 @@ def append_metrics(metric, filename):
     save_metrics(metrics, filename)
 
 
+def plot_loss(metrics):
+    """Plot training/validation accuracy."""
+    history = metrics['history']
+
+    # Get training and test accuracy histories
+    training_loss = history['loss']
+    val_loss = history['val_loss']
+
+    # Create count of the number of epochs
+    epoch_count = range(1, len(training_loss) + 1)
+
+    # Visualize accuracy history
+    plt.plot(epoch_count, training_loss, 'r--')
+    plt.plot(epoch_count, val_loss, 'b-')
+    plt.legend(['Training Loss', 'Validation Loss'])
+    plt.xlabel('Epoch')
+    plt.ylabel('Loss Score')
+
+    return plt
+
+
 def plot_accuracy(metrics):
     """Plot training/validation accuracy."""
     history = metrics['history']
