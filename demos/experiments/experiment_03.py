@@ -23,8 +23,9 @@ from __future__ import absolute_import
 import os
 from sys import argv, exit
 from copy import deepcopy
-from remokit.utils import load_config, clean_session
-from remokit.dataset import permute_index_kfold
+
+from remokit.utils import load_config, clean_session, load_fun
+from remokit.dataset import permute_index_kfold, _category
 from remokit.experiments import run_experiment
 from remokit.preprocessing import preprocess
 from remokit.metrics import append_metrics
@@ -61,11 +62,23 @@ def run_all(main_config, configs):
     for t, v, s in permute(main_config):
         # run, save best/metrics for each submodel
         for config in configs:
-            print("Run submodel from {0}".format(config['name']))
-            config['seed'] = s
-            m, model = run_experiment(t, v, config)
+            from_main = [c for c in main_config['submodels']
+                         if c['config'] in config['name']][0]
+            model = None
+            if from_main.get('skip', False):
+                print("Simulate training went wrong for {0}".format(
+                    config['name']))
+                num_classes = len(_category)
+                shape = config['image_size'].values()
+                shape.append(1)
+                model = load_fun(config['model'])(shape, num_classes)
+            else:
+                # run training normally
+                print("Run submodel from {0}".format(config['name']))
+                config['seed'] = s
+                m, model = run_experiment(t, v, config)
+                append_metrics(m, config['metrics'])
             model.save(config['best_model'])
-            append_metrics(m, config['metrics'])
         # run, save best/metrics for main config
         print("Run model from {0}".format(main_config['name']))
         main_config['seed'] = s
