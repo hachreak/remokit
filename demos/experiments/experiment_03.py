@@ -26,7 +26,7 @@ from copy import deepcopy
 
 from remokit.utils import load_config, clean_session, load_fun
 from remokit.dataset import permute_index_kfold, _category
-from remokit.experiments import run_experiment
+from remokit.postprocessing import run_experiment
 from remokit.preprocessing import preprocess
 from remokit.metrics import append_metrics
 

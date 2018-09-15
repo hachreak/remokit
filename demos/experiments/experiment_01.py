@@ -29,7 +29,7 @@ from remokit.dataset import permute_index_kfold
 from remokit.utils import clean_session, load_config
 from remokit.metrics import save_metrics
 
-from remokit.experiments import run_experiment, save_best
+from remokit.postprocessing import run_experiment, save_best
 from remokit.preprocessing import preprocess
 
 

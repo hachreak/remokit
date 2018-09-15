@@ -1,5 +1,5 @@
 {
-    "prepare_batch": "remokit.experiments.rgb_features_cnn.prepare_batch",
+    "prepare_batch": "remokit.postprocessing.rgb_features_cnn.prepare_batch",
     "full_image_size": {
       "img_x": 300,
       "img_y": 300
@@ -22,7 +22,7 @@
         "has_faces": true,
         "only_features": true,
         "get_label": "remokit.datasets.kdef.get_label",
-        "get_files": "remokit.experiments.rgb_frankenstein.get_files",
+        "get_files": "remokit.postprocessing.rgb_frankenstein.get_files",
         "directory": "data/KDEF-straight/",
         "submodels": [
           {

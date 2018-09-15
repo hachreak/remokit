@@ -25,7 +25,7 @@ from copy import deepcopy
 from keras.models import load_model
 
 from remokit.utils import load_config, load_fun
-from remokit.experiments import run_experiment, save_best, predict as prd
+from remokit.postprocessing import run_experiment, save_best, predict as prd
 from remokit.preprocessing import preprocess
 from remokit.metrics import save_metrics
 from remokit import dataset

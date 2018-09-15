@@ -1,5 +1,5 @@
 {
-    "prepare_batch": "remokit.experiments.rgb_features_cnn.prepare_batch",
+    "prepare_batch": "remokit.postprocessing.rgb_features_cnn.prepare_batch",
     "kfolds": 10,
     "full_image_size": {
       "img_x": 300,

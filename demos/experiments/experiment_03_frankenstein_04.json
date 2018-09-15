@@ -7,7 +7,7 @@
             "get_label": "remokit.preprocessing.extract_face.get_label",
             "get_files": "remokit.preprocessing.extract_face.get_files",
             "get_data": "remokit.preprocessing.extract_face.get_data",
-            "prepare_batch": "remokit.experiments.rgb_cnn.prepare_batch"
+            "prepare_batch": "remokit.postprocessing.rgb_cnn.prepare_batch"
         },
         {
             "config": "experiment_03_frankenstein_eyes.json",
@@ -16,7 +16,7 @@
             "get_label": "remokit.preprocessing.extract_face.get_label",
             "get_files": "remokit.preprocessing.extract_face.get_files",
             "get_data": "remokit.preprocessing.extract_face.get_data",
-            "prepare_batch": "remokit.experiments.rgb_cnn.prepare_batch"
+            "prepare_batch": "remokit.postprocessing.rgb_cnn.prepare_batch"
         },
         {
             "config": "experiment_03_frankenstein_mouth.json",
@@ -25,7 +25,7 @@
             "get_label": "remokit.preprocessing.extract_face.get_label",
             "get_files": "remokit.preprocessing.extract_face.get_files",
             "get_data": "remokit.preprocessing.extract_face.get_data",
-            "prepare_batch": "remokit.experiments.rgb_cnn.prepare_batch"
+            "prepare_batch": "remokit.postprocessing.rgb_cnn.prepare_batch"
         },
         {
             "config": "experiment_03_frankenstein_features.json",
@@ -38,7 +38,7 @@
             "get_label": "remokit.preprocessing.features.get_label",
             "get_files": "remokit.preprocessing.features.get_files",
             "files_types": [".npy"],
-            "prepare_batch": "remokit.experiments.rgb_features_cnn.prepare_batch"
+            "prepare_batch": "remokit.postprocessing.rgb_features_cnn.prepare_batch"
         }
     ],
     "kfolds": 10,
@@ -48,7 +48,7 @@
     "get_label": "remokit.preprocessing.extract_face.get_label",
     "get_files": "remokit.preprocessing.extract_face.get_files",
     "model": "remokit.models.model02.get_model",
-    "prepare_batch": "remokit.experiments.rgb_frankenstein.prepare_batch",
+    "prepare_batch": "remokit.postprocessing.rgb_frankenstein.prepare_batch",
     "best_model": "data/best/03_frankenstein_04.h5",
     "batch_size": 14,
     "epochs": 70,

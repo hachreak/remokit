@@ -28,7 +28,7 @@ from keras.models import load_model
 
 from remokit.utils import load_config, load_fun, set_seed, recreate_directory
 from remokit.datasets import ckp, get_tvt_filenames
-from remokit.experiments import run_experiment, save_best
+from remokit.postprocessing import run_experiment, save_best
 from remokit.preprocessing import preprocess
 from remokit.metrics import plot_prediction as plot, save_metrics
 
@@ -80,7 +80,7 @@ def predict_sequence(config, testing, model=None):
     model = model or load_model(config['best_model'])
     ckconf['image_size'] = deepcopy(config['image_size'])
     ckconf['batch_size'] = config['batch_size']
-    prepare_batch = load_fun('remokit.experiments.rgb_face_cnn.prepare_batch')
+    prepare_batch = load_fun('remokit.postprocessing.rgb_face_cnn.prepare_batch')
 
     # plot prediction
     return predict(testing, ckconf, prepare_batch, model)

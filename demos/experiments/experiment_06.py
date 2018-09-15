@@ -25,7 +25,7 @@ from copy import deepcopy
 from keras.models import load_model
 
 from remokit.utils import load_config, load_fun, set_seed
-from remokit.experiments import run_experiment, save_best, files_split, \
+from remokit.postprocessing import run_experiment, save_best, files_split, \
         evaluate
 from remokit.preprocessing import preprocess
 from remokit.metrics import save_metrics, plot_saliency
