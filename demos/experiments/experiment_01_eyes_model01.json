@@ -16,12 +16,12 @@
     "metrics": "data/metrics/eye_metrics_model01.json",
     "verbose": 2,
     "directory": "data/stage/01_eyes_model01",
-    "get_label": "remokit.preprocessing.extract_face.get_label",
+    "get_label": "remokit.preprocessing.get_label",
     "best_model": "data/best/01_eyes_model01_model.h5",
     "preprocess": [
       {
         "prepare_batch": "remokit.preprocessing.extract_face.prepare_batch",
-        "save": "remokit.preprocessing.extract_face.save",
+        "save": "remokit.preprocessing.save",
         "has_faces": false,
         "get_label": "remokit.datasets.kdef.get_label",
         "get_files": "remokit.datasets.kdef.get_files",

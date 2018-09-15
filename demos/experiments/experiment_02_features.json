@@ -17,7 +17,7 @@
     "verbose": 2,
     "directory": "data/stage/experiment_02_features",
     "files_types": [".npy"],
-    "get_label": "remokit.preprocessing.extract_face.get_label",
+    "get_label": "remokit.preprocessing.get_label",
     "best_model": "data/best/02_features_model.h5",
     "preprocess": [
       {

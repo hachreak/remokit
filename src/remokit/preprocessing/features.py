@@ -107,12 +107,3 @@ def save(batches, config, indices=None):
         np.save(destination, X)
         print(destination)
     return indices
-
-
-def get_label(filename):
-    return os.path.split(filename)[1].split('_')[1]
-
-
-def get_files(directory, *args, **kwargs):
-    """Get image/label files."""
-    return ds.get_files(directory)

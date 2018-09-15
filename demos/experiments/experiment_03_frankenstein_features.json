@@ -11,7 +11,7 @@
     "model": "remokit.models.model07.get_model",
     "metrics": "data/metrics/03_frankenstein_features.json",
     "directory": "data/stage/03_frankenstein_features",
-    "get_label": "remokit.preprocessing.features.get_label",
+    "get_label": "remokit.preprocessing.get_label",
     "best_model": "data/best/03_frankenstein_features.h5",
     "files_types": [".npy"],
     "preprocess": [

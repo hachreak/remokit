@@ -18,8 +18,6 @@
 
 """Preprocessing: extract face from images."""
 
-import os
-import dlib
 from remokit import dataset as ds, adapters, utils, detect
 from remokit.preprocessing import features
 
@@ -54,36 +52,3 @@ def prepare_batch(config):
     batches = ds.batch_adapt(batches, adapters_list)
 
     return batches
-
-
-def save(batches, config, indices=None):
-    """Save preprocessed images."""
-    indices = indices or {v: 0 for v in ds._category.keys() + ['index']}
-    print(indices)
-    for Xbatch, ybatch in batches:
-        for X, y in zip(Xbatch, ybatch):
-            if y == 'neutral':
-                indices['index'] += 1
-            indices[y] += 1
-            filename = '{0:08}_{1}_{2}.jpg'.format(
-                indices['index'], y, indices[y]
-            )
-            destination = os.path.join(config['destination'], filename)
-            dlib.save_image(X, destination)
-            print(destination)
-    return indices
-
-
-def get_files(directory, *args, **kwargs):
-    """Get image/label files."""
-    return ds.get_files(directory)
-
-
-def get_data(files_stream):
-    """Get a streaming of label/image to process."""
-    for filename in files_stream:
-        yield detect.load_img(filename), get_label(filename)
-
-
-def get_label(filename):
-    return os.path.split(filename)[1].split('_')[1]

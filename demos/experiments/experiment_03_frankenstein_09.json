@@ -4,9 +4,9 @@
             "config": "experiment_03_frankenstein_face.json",
             "model": "data/best/03_frankenstein_face.h5",
             "directory": "data/stage/03_frankenstein_face/",
-            "get_label": "remokit.preprocessing.extract_face.get_label",
-            "get_files": "remokit.preprocessing.extract_face.get_files",
-            "get_data": "remokit.preprocessing.extract_face.get_data",
+            "get_label": "remokit.preprocessing.get_label",
+            "get_files": "remokit.preprocessing.get_files",
+            "get_data": "remokit.preprocessing.get_data",
             "prepare_batch": "remokit.postprocessing.rgb_cnn.prepare_batch"
         },
         {
@@ -14,9 +14,9 @@
             "config": "experiment_03_frankenstein_eyes.json",
             "model": "data/best/03_frankenstein_eyes.h5",
             "directory": "data/stage/03_frankenstein_eyes",
-            "get_label": "remokit.preprocessing.extract_face.get_label",
-            "get_files": "remokit.preprocessing.extract_face.get_files",
-            "get_data": "remokit.preprocessing.extract_face.get_data",
+            "get_label": "remokit.preprocessing.get_label",
+            "get_files": "remokit.preprocessing.get_files",
+            "get_data": "remokit.preprocessing.get_data",
             "prepare_batch": "remokit.postprocessing.rgb_cnn.prepare_batch"
         },
         {
@@ -24,9 +24,9 @@
             "config": "experiment_03_frankenstein_mouth.json",
             "model": "data/best/03_frankenstein_mouth.h5",
             "directory": "data/stage/03_frankenstein_mouth",
-            "get_label": "remokit.preprocessing.extract_face.get_label",
-            "get_files": "remokit.preprocessing.extract_face.get_files",
-            "get_data": "remokit.preprocessing.extract_face.get_data",
+            "get_label": "remokit.preprocessing.get_label",
+            "get_files": "remokit.preprocessing.get_files",
+            "get_data": "remokit.preprocessing.get_data",
             "prepare_batch": "remokit.postprocessing.rgb_cnn.prepare_batch"
         }
     ],
@@ -34,8 +34,8 @@
     "repeat_seeds": 10,
     "metrics": "data/metrics/03_frankenstein_08.json",
     "directory": "data/stage/03_frankenstein_mouth",
-    "get_label": "remokit.preprocessing.extract_face.get_label",
-    "get_files": "remokit.preprocessing.extract_face.get_files",
+    "get_label": "remokit.preprocessing.get_label",
+    "get_files": "remokit.preprocessing.get_files",
     "model": "remokit.models.model02.get_model",
     "prepare_batch": "remokit.postprocessing.rgb_frankenstein.prepare_batch",
     "best_model": "data/best/03_frankenstein_08.h5",

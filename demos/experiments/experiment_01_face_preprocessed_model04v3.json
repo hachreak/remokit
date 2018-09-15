@@ -16,12 +16,12 @@
     "metrics": "data/metrics/face_preprocessing_metrics_model04v3.json",
     "verbose": 2,
     "directory": "data/stage/01_face_preprocessed_model04v3",
-    "get_label": "remokit.preprocessing.extract_face.get_label",
+    "get_label": "remokit.preprocessing.get_label",
     "best_model": "data/best/01_face_preprocessed_model04v3_model.h5",
     "preprocess": [
       {
         "prepare_batch": "remokit.preprocessing.extract_face.prepare_batch",
-        "save": "remokit.preprocessing.extract_face.save",
+        "save": "remokit.preprocessing.save",
         "has_faces": true,
         "get_label": "remokit.datasets.kdef.get_label",
         "get_files": "remokit.datasets.kdef.get_files",
@@ -29,7 +29,7 @@
       },
       {
         "prepare_batch": "remokit.preprocessing.extract_face.prepare_batch",
-        "save": "remokit.preprocessing.extract_face.save",
+        "save": "remokit.preprocessing.save",
         "has_faces": true,
         "get_label": "remokit.datasets.ckp.get_label",
         "get_files": "remokit.datasets.ckp.get_files",
@@ -37,7 +37,7 @@
       },
       {
         "prepare_batch": "remokit.preprocessing.extract_face.prepare_batch",
-        "save": "remokit.preprocessing.extract_face.save",
+        "save": "remokit.preprocessing.save",
         "has_faces": true,
         "get_label": "remokit.datasets.jaffe.get_label",
         "get_files": "remokit.datasets.jaffe.get_files",
