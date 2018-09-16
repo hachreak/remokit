@@ -25,7 +25,7 @@ from keras.layers import Dense
 def get_model(input_shape, num_classes):
     model = Sequential()
 
-    nn = input_shape // 4 if input_shape > 50 else input_shape * 2
+    nn = input_shape * 2
     model.add(Dense(nn, activation='relu', input_dim=input_shape))
     model.add(Dense(num_classes, activation='softmax'))
 
