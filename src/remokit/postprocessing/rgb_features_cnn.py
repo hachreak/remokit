@@ -36,7 +36,7 @@ from remokit import dataset, adapters
 from remokit.utils import load_fun
 
 
-def prepare_batch(filenames, config, epochs):
+def prepare_batch(filenames, config, epochs, *args, **kwargs):
     """Prepare a batch."""
     shape = 68 * 2
     norm_max = max(config['image_size'].values())

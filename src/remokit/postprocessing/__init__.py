@@ -30,12 +30,12 @@ from remokit.datasets import get_tvt_filenames
 
 def train(training, validating, config, prepare_batch, **kwargs):
     batches, shape = prepare_batch(
-        training, config, config['epochs']
+        training, config, config['epochs'], type_='train'
     )
     steps_per_epoch = len(training) // config['batch_size']
 
     validation_data, _ = prepare_batch(
-        validating, config, config['epochs']
+        validating, config, config['epochs'], type_='validate'
     )
     validation_steps = len(validating) // config['batch_size']
 
@@ -62,9 +62,7 @@ def train(training, validating, config, prepare_batch, **kwargs):
 def predict(testing, config, prepare_batch, model, **kwargs):
     """Make predictions."""
     # build input batch stream
-    batches, shape = prepare_batch(
-        testing, config, 1
-    )
+    batches, shape = prepare_batch(testing, config, 1, type_='predict')
     steps_per_epoch = len(testing) // config['batch_size']
 
     # read with label is trying to predict
@@ -121,7 +119,7 @@ def predict(testing, config, prepare_batch, model, **kwargs):
 
 def evaluate(testing, config, prepare_batch, model, **kwargs):
     """Evaluate."""
-    batches, shape = prepare_batch(testing, config, 1)
+    batches, shape = prepare_batch(testing, config, 1, type_='evaluate')
     steps_per_epoch = len(testing) // config['batch_size']
 
     metrics = model.evaluate_generator(batches, steps=steps_per_epoch)

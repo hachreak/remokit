@@ -246,6 +246,11 @@ def category2label(category):
     return rev_cat[category]
 
 
+def category2categorical(category):
+    """Convert category to label."""
+    return to_categorical(category, len(_category))
+
+
 def categorical2category(category):
     """Convert category to label."""
     return np.argmax(category)

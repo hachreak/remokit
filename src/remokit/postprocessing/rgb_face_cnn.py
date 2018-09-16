@@ -24,7 +24,7 @@ from remokit import dataset, adapters, utils
 from remokit.preprocessing import features
 
 
-def prepare_batch(filenames, config, epochs):
+def prepare_batch(filenames, config, epochs, *args, **kwargs):
     """Prepare a batch."""
     shape = config['image_size']['img_x'], config['image_size']['img_y'], 1
 
