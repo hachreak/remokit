@@ -18,7 +18,8 @@
 
 """Inject noise."""
 
-from random import randint
+import numpy as np
+from random import randint, uniform
 
 from .. import dataset
 
@@ -27,11 +28,23 @@ def to_random_predict(model):
     """Return a random predictor."""
     print("Load random predictor...")
 
+    def probability(todo):
+        min_ = 0
+        max_ = 0.3
+        if todo == 1:
+            min_ = 0.7
+            max_ = 1
+        return uniform(min_, max_)
+
     def f(batch, *args, **kwargs):
-        return [
+        mapping = [
             dataset.category2categorical(randint(0, model.output_shape[1] - 1))
             for i in range(0, len(batch))
         ]
+        result = []
+        for m in mapping:
+            result.append([probability(v) for v in m])
+        return np.array(result)
     return f
 
 
