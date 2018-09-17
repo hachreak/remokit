@@ -36,6 +36,18 @@ def plot_accuracy(run_number, filename):
     metrics.plot_accuracy(metrics.load(filename)[run_number]).show()
 
 
+def boxplot_accuracies(filenames):
+    values = []
+    names = []
+    for i, filename in enumerate(filenames):
+        ms = metrics.get_valid_metrics(metrics.load(filename))
+        values.append([m['acc'] for m in ms])
+        names.append("Exp {0}".format(i))
+    metrics.boxplot(
+        'Experiments', 'Accuracy', names, values
+    ).show()
+
+
 def plot_loss(run_number, filename):
     """Plot loss."""
     metrics.plot_loss(metrics.load(filename)[run_number]).show()
@@ -51,6 +63,8 @@ def plot_confusion_matrix(filename, normalize):
 
 if len(sys.argv) == 1:
     print('Usage: {0} [cm] [filename] [normalized]'.format(sys.argv[0]))
+    print('Usage: {0} [accuracies] [filename1] [filename2] ...'.format(
+        sys.argv[0]))
     print('Usage: {0} [accuracy] [run-number] [filename]'.format(sys.argv[0]))
     print('Usage: {0} [loss] [run-number] [filename]'.format(sys.argv[0]))
     print('       {0} [all] [filename1] [filename2] ..'.format(sys.argv[0]))
@@ -60,6 +74,8 @@ if sys.argv[1] == 'cm':
     filename = sys.argv[2]
     normalize = len(sys.argv) > 3
     plot_confusion_matrix(filename, normalize)
+if sys.argv[1] == 'accuracies':
+    boxplot_accuracies(sys.argv[2:])
 if sys.argv[1] == 'accuracy':
     run_number = int(sys.argv[2])
     filename = sys.argv[3]

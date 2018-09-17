@@ -45,6 +45,11 @@ def get_mmm(values):
     return values.min(), values.mean(), values.max(), np.var(values)
 
 
+def get_valid_metrics(metrics):
+    """Get only valid metrics with accuracy over a threshold."""
+    return filter(lambda m: m['acc'] >= 0.50, metrics)
+
+
 def aggregate(metrics):
     """Get all kind of stats."""
 
@@ -56,7 +61,7 @@ def aggregate(metrics):
             for k in report.keys()
         }
 
-    fmetrics = filter(lambda m: m['acc'] >= 0.50, metrics)
+    fmetrics = get_valid_metrics(metrics)
 
     return {
         "count": {
@@ -307,3 +312,20 @@ def plot_saliency(model, batches, cmap=None):
             plt.colorbar()
             plt.suptitle(dataset.category2label(idx))
             yield plt
+
+
+def boxplot(title_x, title_y, labels_x, values):
+    """Blox plot accuracy min/mean/max."""
+    fig, axes = plt.subplots(nrows=1, ncols=1, figsize=(9, 4))
+
+    axes.boxplot(values, vert=True, patch_artist=True)
+
+    axes.yaxis.grid(True)
+    axes.set_xticks([y+1 for y in range(len(values))], )
+    axes.set_xlabel(title_x)
+    axes.set_ylabel(title_y)
+
+    plt.setp(axes, xticks=[y+1 for y in range(len(values))],
+             xticklabels=labels_x)
+
+    return plt
