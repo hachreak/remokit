@@ -35,8 +35,8 @@ def to_random_predict(model):
     return f
 
 
-def predict_to_random_predict(model, type_):
+def predict_to_random_predict(type_):
     """Random predictor only on predict and evaluate."""
     if type_ in ['predict', 'evaluate']:
-        return to_random_predict(model)
+        return to_random_predict
     return dataset.to_predict

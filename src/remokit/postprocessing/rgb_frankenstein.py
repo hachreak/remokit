@@ -80,7 +80,7 @@ def _prepare_submodels(filenames, config, epochs, type_):
         # check if defined a personalized prediction function
         to_predict = dataset.to_predict
         if 'to_predict' in subconf:
-            to_predict = utils.load_fun(subconf['to_predict'], type_=type_)
+            to_predict = utils.load_fun(subconf['to_predict'])(type_=type_)
 
         # build prediction batches
         prepare = utils.load_fun(subconf['prepare_batch'])

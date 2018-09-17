@@ -1,7 +1,7 @@
 {
     "submodels": [
         {
-            "skip": true,
+            "to_predict": "remokit.postprocessing.noise.predict_to_random_predict",
             "config": "experiment_03_frankenstein_face.json",
             "model": "data/best/03_frankenstein_face.h5",
             "directory": "data/stage/03_frankenstein_face/",

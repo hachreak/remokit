@@ -10,7 +10,7 @@
             "prepare_batch": "remokit.postprocessing.rgb_cnn.prepare_batch"
         },
         {
-            "skip": true,
+            "to_predict": "remokit.postprocessing.noise.predict_to_random_predict",
             "config": "experiment_03_frankenstein_eyes.json",
             "model": "data/best/03_frankenstein_eyes.h5",
             "directory": "data/stage/03_frankenstein_eyes",
@@ -20,7 +20,7 @@
             "prepare_batch": "remokit.postprocessing.rgb_cnn.prepare_batch"
         },
         {
-            "skip": true,
+            "to_predict": "remokit.postprocessing.noise.predict_to_random_predict",
             "config": "experiment_03_frankenstein_mouth.json",
             "model": "data/best/03_frankenstein_mouth.h5",
             "directory": "data/stage/03_frankenstein_mouth",

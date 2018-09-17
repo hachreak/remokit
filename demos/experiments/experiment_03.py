@@ -55,12 +55,6 @@ def copy_conf(main_config, configs):
         configs[i]['epochs'] = main_config['epochs']
         configs[i]['verbose'] = main_config['verbose']
 
-        # check if should randomize prediction
-        from_main = [c for c in main_config['submodels']
-                     if c['config'] in configs[i]['name']][0]
-        if from_main.get('skip', False):
-            configs[i]['to_predict'] = \
-                'remokit.postprocessing.noise.predict_to_random_predict'
     return configs
 
 
