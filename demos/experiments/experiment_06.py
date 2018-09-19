@@ -67,7 +67,7 @@ def main(args):
     if len(args) < 2:
         menu = (
             "Usage: {0} preprocess [config_file] \n"
-            "       {0] train [config_file] [test_index] [val_index] [seed]\n"
+            "       {0} train [config_file] [test_index] [val_index] [seed]\n"
             "       {0} saliency [config_file] [test_index] [val_index] "
             "[seed] [testing|validating|training] [index]"
         )
