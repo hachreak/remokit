@@ -329,3 +329,32 @@ def boxplot(title_x, title_y, labels_x, values):
              xticklabels=labels_x)
 
     return plt
+
+
+def variance(directory, get_data, get_files, get_label):
+    """Extract information about variance."""
+    per_cats = dataset.files_per_category(get_files(directory), get_label)
+
+    result = {}
+    for cat, filenames in per_cats.items():
+        result[cat] = np.var([d[0] for d in get_data(filenames, get_label)])
+
+    return result
+
+
+def evaluate_dataset_compression(filenames, get_data, get_label):
+    """Evaluate how much can be compressed."""
+    from remokit import adapters
+    from sklearn.decomposition import PCA
+    resize = adapters.resize(150, 150)
+    pca = PCA(0.95)
+    to_fit = int(len(filenames) * 0.9)
+
+    for data, _ in dataset.get_data(filenames[:to_fit], get_label):
+        pca.fit(resize(adapters.rgb_to_bn(data)))
+
+    result = []
+    for data, _ in dataset.get_data(filenames[to_fit:], get_label):
+        result.append(pca.transform(resize(adapters.rgb_to_bn(data))))
+
+    return np.array(result)
