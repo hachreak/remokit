@@ -18,7 +18,7 @@
 
 """setuptools."""
 
-from setuptools import setup  # , find_packages
+from setuptools import setup, find_packages
 from codecs import open
 from os import path
 
@@ -53,7 +53,8 @@ setup(
     ],
 
     keywords='machine learning',
-    packages={'': 'src'},  # packages,  # Required
+    packages=find_packages('src'),
+    package_dir={'': 'src'},
     install_requires=[
         'keras-vis>=0.4.1',
         'matplotlib>=2.2.2',
